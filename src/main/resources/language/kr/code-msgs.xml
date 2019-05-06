@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codes lang="ko">
+    <!-- (00:종류/000:시퀀스) -->
+    <!-- 공용 (00000) -->
+    <code code="00000" msg="OK"/>
+    
+    <!-- 기타 (99999) -->
+    <code code="99999" msg="알 수 없는 오류가 발생했습니다."/>
+</codes>

@@ -5,6 +5,9 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
+import com.ghasix.datas.domain.Commutes;
+import com.ghasix.datas.domain.CommutesRepository;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +26,7 @@ public class CommutesRepositoryTests {
         // Create
         Commutes commutes = Commutes.builder()
                             .commute_companay_name("KSNET")
-                            .check_int_time(System.currentTimeMillis())
+                            .check_in_time(System.currentTimeMillis())
                             .memo("오전 반차로 늦게 출근.").build();
         commutesRepository.save(commutes);
 

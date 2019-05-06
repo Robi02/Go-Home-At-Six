@@ -1,4 +1,4 @@
-package com.ghasix.domain;
+package com.ghasix.datas.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
