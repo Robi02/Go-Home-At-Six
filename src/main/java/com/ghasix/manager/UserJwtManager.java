@@ -1,4 +1,4 @@
-/*package com.ghasix.manager;
+package com.ghasix.manager;
 
 import java.security.Key;
 import java.util.Base64;
@@ -10,13 +10,12 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import com.evtlogger.util.CipherUtil;
-import com.evtlogger.util.JwtUtil;
+import com.robi.util.CipherUtil;
+import com.robi.util.JwtUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.IncorrectClaimException;
@@ -29,15 +28,21 @@ import io.jsonwebtoken.security.SignatureException;
 @PropertySource("classpath:config.properties")
 public class UserJwtManager extends AbsManager {
     // [Class private constants]
-    private static final Logger logger = LoggerFactory.getLogger(UserJwtManager.class);
+    private final Logger logger = LoggerFactory.getLogger(UserJwtManager.class);
     
     // [Class private variables]
     private String              jwtSubject = null;      // JWT 제목
     private int                 jwtLifeMin = 0;         // JWT 유효 시간 (분)
     private Map<String, Object> jwtReqClaims = null;    // JWT 필수 Claims
     private Key                 jwtSignKey = null;      // JWT 해시 키 (SHA256 해시 서명 키)
-    private SecretKeySpec       jwtKeySpec = null;      // JWT 암호화 키 (AES 암호화 키)
-    @Autowired private Environment env;                 // 설정파일 클래스
+    private SecretKeySpec       jwtKeySpec = null;      // JWT 암호화 키 (AES128 암호화 키)
+    
+    private Environment env;                            // 설정파일 클래스
+
+    // [Constructor]
+    public UserJwtManager(Environment env) {
+        this.env = env;
+    }
     
     // [Methods]
     @Override // 매니저 초기화 함수
@@ -46,21 +51,21 @@ public class UserJwtManager extends AbsManager {
             // Name and Version
             managerName     = "UserJwtManager";
             managerVersion  = "1.0.0";
-            
+
             // JwtHeaderType
-            jwtSubject = env.getProperty("userJwt.jwtSubject");
-    
+            jwtSubject = env.getProperty("userJwtMgr.jwtSubject");
+
             // JwtLifeMin
-            jwtLifeMin = Integer.valueOf(env.getProperty("userJwt.jwtLifeMin"));
-            
+            jwtLifeMin = Integer.valueOf(env.getProperty("userJwtMgr.jwtLifeMin"));
+
             // JwtReqClaims
             jwtReqClaims = new HashMap<String, Object>();
             jwtReqClaims.put("sub", jwtSubject);
-    
+
             // JwtHashKey
             byte[] jwtHashKeyByte = null;
-            jwtHashKeyByte = env.getProperty("userJwt.jwtHashKey").getBytes();
-    
+            jwtHashKeyByte = env.getProperty("userJwtMgr.jwtHashKey").getBytes();
+
             if (jwtHashKeyByte.length != 32) { // JwtSecretKey값이 32Byte가 아니면, 패딩하거나 자름
                 byte[] newJwtSecretKeyByte = new byte[32];
                 System.arraycopy(jwtHashKeyByte, 0, newJwtSecretKeyByte, 0,
@@ -72,16 +77,15 @@ public class UserJwtManager extends AbsManager {
     
             // JwtKeySpec
             byte[] aes128KeyBytes = new byte[16];
-            byte[] aesKeyBytesFromEnv = env.getProperty("userJwt.jwtAesKey").getBytes();
+            byte[] aesKeyBytesFromEnv = env.getProperty("userJwtMgr.jwtAesKey").getBytes();
             System.arraycopy(aesKeyBytesFromEnv, 0, aes128KeyBytes, 0,
                     Math.min(aes128KeyBytes.length, aesKeyBytesFromEnv.length));
             jwtKeySpec = new SecretKeySpec(aes128KeyBytes, "AES");
-    
             managerInitialized = true;
         }
         catch (Exception e) {
             logger.error("Exception whlie Manager Initialization!", e);
-            managerInitialized = false;    
+            managerInitialized = false;
         }
         
         return managerInitialized;
@@ -183,8 +187,6 @@ public class UserJwtManager extends AbsManager {
         // Base64디코딩 수행
         byte[] base64Bytes = null;
         
-        logger.info("base64JwtStr:" + base64JwtStr);
-        
         if ((base64Bytes = Base64.getDecoder().decode(base64JwtStr.getBytes())) == null) {
             logger.error("'base64Bytes' is null! Base64 Decoding fail! (base64JwtStr:" + base64JwtStr + ")");
             return null;
@@ -206,4 +208,3 @@ public class UserJwtManager extends AbsManager {
         return rtMap;
     }
 }
-*/

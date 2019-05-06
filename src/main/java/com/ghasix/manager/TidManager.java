@@ -11,7 +11,7 @@ public class TidManager extends AbsManager {
 
     private long accessCnt = 0;
 
-    public long generateTid() {
-        return accessCnt++;
+    public String generateTid() {
+        return String.valueOf(accessCnt++);
     }
 }

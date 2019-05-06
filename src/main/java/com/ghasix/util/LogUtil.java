@@ -5,12 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 public class LogUtil {
-
+    // [Class private constants]
     private static final Logger logger = LoggerFactory.getLogger(LogUtil.class);
-    
     private static final String LAYER_STR = "layer";
     private static final String TID_STR   = "tId";
     
+    // [Class public constants]
     public static final String LAYER_SYS = "SYS";
     public static final String LAYER_CTR = "CTR";
     public static final String LAYER_SVC = "SVC";
@@ -41,19 +41,13 @@ public class LogUtil {
     }
 
     /**
-     * <p>로그에 출력되는 tId를 변경하고 기존 tId를 반환합니다.</p>
-     * @param tId : 새로운 tId.
-     * @return 변경전 사용하던 tId를 반환합니다.
+     * <p>로그 tId를 변경하고 기존 tiD를 반환합니다.</p>
+     * @param tId : 새로운 tId 문자열.
+     * @return tId 변경전 사용하던 tId문자열을 반환합니다.
      */
-    public static long changeTid(long tId) {
-        long oldTid = -1;
-        String oldTidStr = MDC.get(TID_STR);
-
-        if (oldTidStr != null) {
-            oldTid = Long.parseLong(oldTidStr);
-        }
-
-        MDC.put(TID_STR, String.valueOf(tId));
+    public static String changeTid(String tId) {
+        String oldTid = MDC.get(TID_STR);
+        MDC.put(TID_STR, tId);
         return oldTid;
     }
 }

@@ -26,7 +26,10 @@ public class Users {
     @Column(nullable = false)
     int access_level = 1;
 
-    @Column
+    @Column(length = 8, nullable = false)
+    String status;
+
+    @Column(nullable = false)
     long join_time;
 
     @Column

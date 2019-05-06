@@ -38,7 +38,7 @@ public class ControllerAop {
         Object ctrReturn = null;
 
         // tId 생성(Transaction ID)
-        long tId = tidMgr.generateTid();
+        String tId = tidMgr.generateTid();
         LogUtil.changeTid(tId);
 
         // 클라이언트 정보 획득(IP, Methods, URI, ...) and Start logging
