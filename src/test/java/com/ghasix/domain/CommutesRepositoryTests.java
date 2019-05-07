@@ -25,8 +25,8 @@ public class CommutesRepositoryTests {
     public void testCommutesRepository() {
         // Create
         Commutes commutes = Commutes.builder()
-                            .commute_companay_name("KSNET")
-                            .check_in_time(System.currentTimeMillis())
+                            .commuteCompanyName("KSNET")
+                            .checkInTime(System.currentTimeMillis())
                             .memo("오전 반차로 늦게 출근.").build();
         commutesRepository.save(commutes);
 
@@ -34,6 +34,6 @@ public class CommutesRepositoryTests {
         List<Commutes> commutesList = commutesRepository.findAll();
 
         Commutes ksnetCommutes = commutesList.get(0);
-        assertThat(ksnetCommutes.getCommute_companay_name(), is("KSNET"));
+        assertThat(ksnetCommutes.getCommuteCompanyName(), is("KSNET"));
     }
 }

@@ -23,8 +23,8 @@ public class AjaxResponseManager extends AbsManager {
     private final String RESULT_KEY_RESULT_DATA = "resultData";
     
     private final long   RESPONSE_TID_DEFAULT   = 0;
-    private final String RESULT_CODE_DEFAULT    = "00000";
-    private final String RESULT_CODE_UNKNOWN    = "99999";
+    private final String RESULT_CODE_SUCCESS    = "00000";
+    private final String RESULT_CODE_SYSFAIL    = "99999";
     private final String RESULT_MSG_DEFAULT     = null;
     private final String RESULT_DATA_DEFAULT    = null;
 
@@ -38,12 +38,12 @@ public class AjaxResponseManager extends AbsManager {
     private Map<String, Object> makeMapFromKeyValAry(Object... resultDataKeyValAry) {
         if (resultDataKeyValAry == null) {
 			logger.error("'resultDataKeyValAry' is null!");
-			return makeResponse(RESULT_CODE_UNKNOWN);
+			return makeResponse(RESULT_CODE_SYSFAIL);
 		}
 		
 		if (resultDataKeyValAry.length % 2 != 0) {
 			logger.error("'keyValAry' is NOT multiple of 2!");
-			return makeResponse(RESULT_CODE_UNKNOWN);
+			return makeResponse(RESULT_CODE_SYSFAIL);
 		}
 		
 		Map<String, Object> responseDataMap = new HashMap<String, Object>();
@@ -83,14 +83,10 @@ public class AjaxResponseManager extends AbsManager {
             return false;
         }
 
-        if (!resultCode.equals(RESULT_CODE_DEFAULT)) {
-            return false;
-        }
-
-        return true;
+        return resultCode.equals(RESULT_CODE_SUCCESS);
     }
 
-    public String getResponseData(Map<String, Object> inMap, String key) {
+    public Object getResponseData(Map<String, Object> inMap, String key) {
         if (inMap == null) {
             return null;
         }
@@ -108,14 +104,14 @@ public class AjaxResponseManager extends AbsManager {
             return null;
         }
 
-        return rtObj.toString();
+        return rtObj;
     }
 
     public Map<String, Object> makeResponse() {
         Map<String, Object> rtMap = new HashMap<String, Object>();
         
         rtMap.put(RESPONSE_KEY_TID, RESPONSE_TID_DEFAULT);
-        setCodeWithMsg(rtMap, RESULT_CODE_DEFAULT);
+        setCodeWithMsg(rtMap, RESULT_CODE_SUCCESS);
         rtMap.put(RESULT_KEY_RESULT_DATA, null);
         return rtMap;
     }
@@ -133,7 +129,7 @@ public class AjaxResponseManager extends AbsManager {
         Map<String, Object> rtMap = new HashMap<String, Object>();
         
         rtMap.put(RESPONSE_KEY_TID, RESPONSE_TID_DEFAULT);
-        setCodeWithMsg(rtMap, RESULT_CODE_DEFAULT);
+        setCodeWithMsg(rtMap, RESULT_CODE_SUCCESS);
         rtMap.put(RESULT_KEY_RESULT_DATA, resultData);
         return rtMap;
     }

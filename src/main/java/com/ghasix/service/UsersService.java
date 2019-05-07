@@ -5,7 +5,6 @@ import java.util.Map;
 import com.ghasix.datas.domain.Users;
 import com.ghasix.datas.domain.UsersRepository;
 import com.ghasix.manager.AjaxResponseManager;
-import com.ghasix.manager.UserJwtManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ public class UsersService implements IUsersService {
     private UsersRepository userRepo;
 
     // 회원 존재여부, 서비스 접근유효성등 검사
-    public Map<String, Object> checkUserStatus(String userJwt) { // 여기부터 시작, userJwt는 jwt서비스로 분리? @@
+    public Map<String, Object> checkUserStatus(String userJwt) {
         Map<String, Object> jwtSvcResult = userJwtSvc.getUserDataFromJwt(userJwt);
 
         if (jwtSvcResult == null) {
@@ -32,12 +31,12 @@ public class UsersService implements IUsersService {
             return jwtSvcResult;
         }
 
-        if (ajaxResponseMgr.isResponseCodeSuccess(jwtSvcResult)) {
+        if (ajaxResponseMgr.isResponseCodeSuccess(jwtSvcResult) == false) {
             logger.error("'jwtSvcResult's result code is NOT success!");
             return jwtSvcResult;
         }
 
-        String email = ajaxResponseMgr.getResponseData(jwtSvcResult, "email");
+        String email = (String) ajaxResponseMgr.getResponseData(jwtSvcResult, "userId");
         Users selectedUser = null;
 
         try {
@@ -45,7 +44,7 @@ public class UsersService implements IUsersService {
         }
         catch (Exception e) {
             logger.error("JPA Exception!", e);
-            return ajaxResponseMgr.makeResponse("10100"); // 회원 DB조회중 오류가 발생했습니다.
+            return ajaxResponseMgr.makeResponse("10101"); // 회원 DB조회중 오류가 발생했습니다.
         }
 
         if (selectedUser == null) {
@@ -66,8 +65,14 @@ public class UsersService implements IUsersService {
             }
         }
 
-        long id = selectedUser.getId();
-        logger.info("User found! (id:" + id + ")");
-        return ajaxResponseMgr.makeResponse("id", id);
+        Long accessibleTime = selectedUser.getAccessibleTime();
+
+        if (accessibleTime != null && System.currentTimeMillis() < accessibleTime) {
+            logger.info("User found but, accessibleTime NOT reached. (accessibleTime:" + accessibleTime + ")");
+            return ajaxResponseMgr.makeResponse("10004"); // 아직 사용할 수 없는 계정입니다.
+        }
+
+        logger.info("User found and authorized! (selectedUser:" + selectedUser.toString() + ")");
+        return ajaxResponseMgr.makeResponse("00000", "selectedUser", selectedUser);
     }
 }

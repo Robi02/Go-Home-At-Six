@@ -31,7 +31,7 @@ public class UserJwtService {
     public Map<String, Object> getUserDataFromJwt(String userJwt) {
         if (userJwt == null) {
             logger.error("'userJwt' is null!");
-            return ajaxResponseMgr.makeResponse("00101"); // 회원토큰 값이 비었습니다.
+            return ajaxResponseMgr.makeResponse("00202"); // 회원토큰 값이 비었습니다.
         }
 
         Map<String, Object> userJwtMap = null;
@@ -40,36 +40,37 @@ public class UserJwtService {
             userJwtMap = userJwtMgr.decodeUserJwt(userJwt);
             
             if (userJwtMap == null) {
-                return ajaxResponseMgr.makeResponse("00100"); // 회원토큰 분석중 오류가 발생했습니다.
+                return ajaxResponseMgr.makeResponse("00201"); // 회원토큰 분석중 오류가 발생했습니다.
             }
         }
         catch (IllegalArgumentException e) {
             logger.error("'userJwt' is null or zero length! (userJwt:" + userJwt +")");
-            return ajaxResponseMgr.makeResponse("00101"); // 회원토큰 값이 비었습니다.
+            return ajaxResponseMgr.makeResponse("00202"); // 회원토큰 값이 비었습니다.
         }
         catch (MalformedJwtException e) {
             logger.error("'userJwt' format is NOT JWT! (userJwt:" + userJwt + ")");
-            return ajaxResponseMgr.makeResponse("00102"); // 회원토큰이 올바르지 않은 형식입니다.
+            return ajaxResponseMgr.makeResponse("00203"); // 회원토큰이 올바르지 않은 형식입니다.
         }
         catch (ExpiredJwtException e) {
             logger.error("'userJwt' is expired token! (userJwt:" + userJwt + ")");
-            return ajaxResponseMgr.makeResponse("00103"); // 회원토큰이 만료되었습니다.
+            return ajaxResponseMgr.makeResponse("00204"); // 회원토큰이 만료되었습니다.
         }
         catch (SignatureException e) {
             logger.error("'userJwt' has wrong sign! (userJwt:" + userJwt + ")");
-            return ajaxResponseMgr.makeResponse("00104"); // 변조된 회원 토큰입니다.
+            return ajaxResponseMgr.makeResponse("00205"); // 변조된 회원 토큰입니다.
         }
         catch (MissingClaimException e) {
             logger.error("'userJwt' has missing vital claim! (userJwt:" + userJwt + ")");
-            return ajaxResponseMgr.makeResponse("00105"); // 회원토큰에서 필수값이 비었습니다.
+            return ajaxResponseMgr.makeResponse("00206"); // 회원토큰에서 필수값이 비었습니다.
         }
         catch (IncorrectClaimException e) {
             logger.error("'userJwt' has woring vital claim's value! (userJwt:" + userJwt + ")");
-            return ajaxResponseMgr.makeResponse("00106"); // 회원토큰에서 필수값이 올바르지 않습니다.
+            return ajaxResponseMgr.makeResponse("00207"); // 회원토큰에서 필수값이 올바르지 않습니다.
         }
 
-        
-        logger.info("JWT decode success! (userJwtMap:" + userJwtMap.toString());
-        return ajaxResponseMgr.makeResponse(userJwtMap);
+        String userId = (String) userJwtMap.get("userId");
+
+        logger.info("JWT decode success! (userId:" + userId + ")");
+        return ajaxResponseMgr.makeResponse("00000", "userId", userId);
     }
 }

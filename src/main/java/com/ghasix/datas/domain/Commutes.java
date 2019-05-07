@@ -3,41 +3,50 @@ package com.ghasix.datas.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@Entity
+@Table(name = "commutes")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Entity
+@ToString
 public class Commutes {
 
-    @Id @GeneratedValue // 고유 ID
-    private long id; 
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id") // 고유 ID
+    private Long id;
 
-    // 소유 유저 ID
-    private long own_user_id; 
+    @ManyToOne @JoinColumn(name = "own_user_id", nullable = false)
+    private Users ownUserId;
 
-    @Column(length = 64, nullable = false) // 출퇴근 회사 이름
-    private String commute_companay_name; 
+    @Column(name = "commute_company_name", length = 64, nullable = false) // 출퇴근 회사 이름
+    private String commuteCompanyName; 
 
-    @Column(nullable = false) // 출근시간
-    private long check_in_time;
+    @Column(name = "check_in_time", nullable = false) // 출근시간
+    private Long checkInTime;
 
-    @Column // 퇴근시간
-    private long check_out_time;
+    @Column(name = "check_out_time") // 퇴근시간
+    private Long checkOutTime;
 
-    @Column(length = 256) // 메모
+    @Column(name = "memo", length = 256) // 메모
     private String memo;
 
     @Builder
-    public Commutes(String commute_companay_name, long check_in_time, long check_out_time, String memo) {
-        this.commute_companay_name = commute_companay_name;
-        this.check_in_time = check_in_time;
-        this.check_out_time = check_out_time;
+    public Commutes(Users ownUserId, String commuteCompanyName, long checkInTime, long checkOutTime, String memo) {
+        this.ownUserId = ownUserId;
+        this.commuteCompanyName = commuteCompanyName;
+        this.checkInTime = checkInTime;
+        this.checkOutTime = checkOutTime;
         this.memo = memo;
     }
 }
