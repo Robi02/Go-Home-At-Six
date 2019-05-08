@@ -42,7 +42,7 @@ public class Commutes {
     private String memo;
 
     @Builder
-    public Commutes(Users ownUserId, String commuteCompanyName, long checkInTime, long checkOutTime, String memo) {
+    public Commutes(Users ownUserId, String commuteCompanyName, Long checkInTime, Long checkOutTime, String memo) {
         this.ownUserId = ownUserId;
         this.commuteCompanyName = commuteCompanyName;
         this.checkInTime = checkInTime;

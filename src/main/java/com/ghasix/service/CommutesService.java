@@ -66,7 +66,7 @@ public class CommutesService implements ICommutesService {
             return ajaxResponseMgr.makeResponse("00102"); // 서버에서 값 획득에 실패했습니다.
         }
 
-        // JPA
+        // JPA - Insert
         Commutes insertCommutes = null;
 
         try {
@@ -76,10 +76,14 @@ public class CommutesService implements ICommutesService {
                                                .checkOutTime(postCommutesDto.getCheckInTime())
                                                .memo(postCommutesDto.getMemo())
                                                .build();
-            commutesRepo.save(insertCommutes);
+            
+            if (commutesRepo.save(insertCommutes) == null) {
+                logger.error("'.save()' returns null!");
+                throw new Exception();
+            }
         }
         catch (Exception e) {
-            logger.error("JPA Exception!", e);
+            logger.error("JPA Insert Exception!", e);
             return ajaxResponseMgr.makeResponse("20102"); // 출퇴근기록 DB추가중 오류가 발생했습니다.
         }
 
