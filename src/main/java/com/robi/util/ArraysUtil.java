@@ -35,23 +35,5 @@ public class ArraysUtil {
         }
         
         return rtAry;
-    }
-    
-    /**
-     * <p>입력된 Object[] 객체의 내용을 연결하여 문자열로 반환합니다.</p>
-     * @param inArary : 문자열로 반환할 배열.
-     * @return 문자열로 연결된 배열의 내용.
-     */
-    public static String toString(Object[] inArary) {
-        StringBuilder rtSb = new StringBuilder();
-        String delimStr = ", ";
-        
-        for (Object obj : inArary) {
-            rtSb.append(obj.toString()).append(delimStr);
-        }
-        
-        rtSb.setLength(rtSb.length() - delimStr.length());
-        return rtSb.toString();
-    }
-    
+    }    
 }

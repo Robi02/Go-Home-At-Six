@@ -4,7 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.ghasix.manager.AjaxResponseManager;
+import com.ghasix.datas.result.ApiResult;
 import com.ghasix.manager.TidManager;
 import com.ghasix.util.LogUtil;
 
@@ -14,6 +14,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -28,7 +29,6 @@ public class ControllerAop {
     private final Logger logger = LoggerFactory.getLogger(ControllerAop.class);
     
     private TidManager tidMgr;
-    private AjaxResponseManager ajaxResponseMgr;
 
     @Around("execution(* com.ghasix.controller..*.*(..))") // 컨트롤러 AoP
     public Object aroundController(ProceedingJoinPoint pjp) {
@@ -39,7 +39,7 @@ public class ControllerAop {
 
         // tId 생성(Transaction ID)
         String tId = tidMgr.generateTid();
-        LogUtil.changeTid(tId);
+        String tIdOld = LogUtil.changeTid(tId);
 
         // 클라이언트 정보 획득(IP, Methods, URI, ...) and Start logging
         logger.info("STARTS - " + getClientInfo());
@@ -54,8 +54,28 @@ public class ControllerAop {
                 ctrResult = false;
             }
 
-            if (ctrReturn != null && ctrReturn instanceof Map) {
-                ajaxResponseMgr.setTid((Map<String, Object>) ctrReturn, tId);
+            // ApiResult & ResponseEntity<ApiResult> 타입의 경우 생성된 tId를 넣어주고 최적화 수행 (controllerCompact)
+            if (ctrReturn != null) {
+                try {
+                    ApiResult apiResult = null;
+
+                    if (ctrReturn instanceof ApiResult) {
+                        apiResult = (ApiResult) ctrReturn;
+                        apiResult.controllerCompact(tId);
+                    }
+                    else if (ctrReturn instanceof ResponseEntity<?>) {
+                        ResponseEntity<ApiResult> responseEntity = (ResponseEntity<ApiResult>) ctrReturn;
+                        apiResult = responseEntity.getBody();
+                    }
+
+                    if (apiResult != null) {
+                        apiResult.controllerCompact(tId);
+                    }
+                }
+                catch (ClassCastException e) {
+                    // Controller's return type is ResponseEntity but, <Generic> is NOT ApiResult
+                    // That could be happened NOT logical error. so, we don't have do anything here...
+                }
             }
         }
         catch (Throwable t) {
@@ -66,6 +86,7 @@ public class ControllerAop {
         // 결과 로깅 및 반환
         logger.info("FINISH - Result:" + ctrResult + " (TimeElapsed:" + (System.currentTimeMillis() - startTime) + "ms)");
         LogUtil.changeLogLayer(oldLogLayerStr);
+        LogUtil.changeTid(tIdOld);
         return ctrReturn;
     }
 

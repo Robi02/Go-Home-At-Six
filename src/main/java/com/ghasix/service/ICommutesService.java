@@ -1,16 +1,15 @@
 package com.ghasix.service;
 
-import java.util.Map;
-
 import com.ghasix.datas.dto.PostCommutesDto;
 import com.ghasix.datas.dto.PutCommutesDto;
+import com.ghasix.datas.result.ApiResult;
 
 public interface ICommutesService {
 
-    public Map<String, Object> selectCommutesAll(String userJwt);
-    public Map<String, Object> selectCommutesById(String userJwt, long commuteId);
-    public Map<String, Object> selectCommutesByTime(String userJwt, long beginTime, long EndTime);
-    public Map<String, Object> insertCommutes(String userJwt, PostCommutesDto postCommutesDto);
-    public Map<String, Object> updateCommutes(String userJwt, PutCommutesDto updateCommutesDto);
-    public Map<String, Object> deleteCommutes(String userJwt);
+    public ApiResult selectCommutesAll(String userJwt);
+    public ApiResult selectCommutesById(String userJwt, long commuteId);
+    public ApiResult selectCommutesByTime(String userJwt, long beginTime, long EndTime);
+    public ApiResult insertCommutes(String userJwt, PostCommutesDto postCommutesDto);
+    public ApiResult updateCommutes(String userJwt, PutCommutesDto updateCommutesDto);
+    public ApiResult deleteCommutes(String userJwt);
 }

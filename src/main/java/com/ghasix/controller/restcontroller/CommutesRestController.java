@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.ghasix.datas.dto.PostCommutesDto;
 import com.ghasix.datas.dto.PutCommutesDto;
-import com.ghasix.manager.AjaxResponseManager;
+import com.ghasix.datas.result.ApiResult;
 import com.ghasix.service.CommutesService;
 
 import org.slf4j.Logger;
@@ -26,43 +26,48 @@ public class CommutesRestController {
 
     private final Logger logger = LoggerFactory.getLogger(CommutesRestController.class);
 
-    AjaxResponseManager ajaxResponseMgr;
     CommutesService commutesSvc;
 
     @GetMapping("/commutes/time/all") // 출퇴근 기록 전체 조회
-    public Map<String, Object> getCommutesTimeAll(@RequestHeader("userJwt") String userJwt) {
+    public ApiResult getCommutesTimeAll(
+        @RequestHeader("userJwt") String userJwt) {
         return null;
     }
 
     @GetMapping("/commutes/{id}") // 특정 출퇴근 기록 조회
-    public Map<String, Object> getCommutesById(@PathVariable("id") long id,
-                                               @RequestHeader("userJwt") String userJwt) {
+    public ApiResult getCommutesById(
+        @PathVariable("id") long id,
+        @RequestHeader("userJwt") String userJwt) {
         return null;
     }
 
     @GetMapping("/commutes/time/{beginTime}-{endTime}") // 출퇴근 기록 범위 조회
-    public Map<String, Object> getCommutesTimeBetween(@PathVariable("beginTime") long beginTime,
-                                                      @PathVariable("endTime") long endTime,
-                                                      @RequestHeader("userJwt") String userJwt) {
+    public ApiResult getCommutesTimeBetween(
+        @PathVariable("beginTime") long beginTime,
+        @PathVariable("endTime") long endTime,
+        @RequestHeader("userJwt") String userJwt) {
         return null;
     }
 
     @PostMapping("/commutes") // 출퇴근 기록 추가
-    public Map<String, Object> postCommutes(@RequestHeader("userJwt") String userJwt,
-                                            @RequestBody PostCommutesDto postCommutesDto) {
+    public ApiResult postCommutes(
+        @RequestHeader("userJwt") String userJwt,
+        @RequestBody PostCommutesDto postCommutesDto)
+    {
         return commutesSvc.insertCommutes(userJwt, postCommutesDto);
     }
 
     @PutMapping("/commutes/{id}") // 특정 출퇴근 기록 수정
-    public Map<String, Object> putCommutes(@PathVariable("id") long id,
-                                           @RequestHeader("userJwt") String userJwt,
-                                           @RequestBody PutCommutesDto putCommutesDto) {
+    public ApiResult putCommutes(
+        @PathVariable("id") long id,
+        @RequestHeader("userJwt") String userJwt,
+        @RequestBody PutCommutesDto putCommutesDto) {
         return null;
     }
 
     @DeleteMapping("/commutes/{id}") // 특정 출퇴근 기록 삭제
-    public Map<String, Object> deleteCommutes(@PathVariable("id") long id,
-                                              @RequestHeader("userJwt") String userJwt) {
+    public ApiResult deleteCommutes(@PathVariable("id") long id,
+        @RequestHeader("userJwt") String userJwt) {
         return null;
     }
 }

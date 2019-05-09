@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.slf4j.Logger;
@@ -45,6 +46,7 @@ public class UserJwtManager extends AbsManager {
     }
     
     // [Methods]
+    @PostConstruct
     @Override // 매니저 초기화 함수
     public boolean init() {
         try {

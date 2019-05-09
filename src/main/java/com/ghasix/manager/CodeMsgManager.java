@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -39,9 +40,14 @@ public class CodeMsgManager extends AbsManager {
 	public static final String SUCCESS_CODE = "00000";
 	public static final String SYSTEM_FAIL_CODE = "99999";
 
-	// [Methods]
+    // [Methods]
+    @PostConstruct
 	@Override // 매니저 클래스 초기화
 	public boolean init() {
+        // Name and Version
+        managerName     = "CodeMsgManager";
+        managerVersion  = "1.0.0";
+
         String[] xmlPaths = env.getProperty("codeMsgMgr.codeMsgXmlPaths", String[].class);
 
         if (xmlPaths.length % 2 != 0) {

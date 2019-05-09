@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ghasix.datas.dto.PostUsersDto;
-import com.ghasix.manager.AjaxResponseManager;
+import com.ghasix.datas.result.ApiResult;
 import com.ghasix.manager.UserJwtManager;
 import com.ghasix.service.UsersService;
 
@@ -26,18 +26,17 @@ public class UsersRestController {
 
     private UsersService usersSvc;
     private UserJwtManager userJwtMgr;
-    private AjaxResponseManager ajaxResponseMgr;
 
     @GetMapping("/users/{email}/jwt")
-    public Map<String, Object> getUserJwt(@PathVariable("email") String email) {
+    public ApiResult getUserJwt(@PathVariable("email") String email) {
         // Test
         Map<String, Object> rtMap = new HashMap<String, Object>();
         rtMap.put("userJwt", userJwtMgr.encodeUserJwt(email));
-        return ajaxResponseMgr.makeResponse(rtMap);
+        return ApiResult.make(rtMap);
     }
 
     @PostMapping("/users")
-    public Map<String, Object> postUser(@RequestBody PostUsersDto postUsersDto) {
+    public ApiResult postUser(@RequestBody PostUsersDto postUsersDto) {
         // Test
         return usersSvc.insertUser(postUsersDto.getEmail(), postUsersDto.getName());
     }
