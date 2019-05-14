@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.ghasix.datas.result.ApiResult;
+import com.ghasix.manager.CodeMsgManager;
 import com.ghasix.manager.TidManager;
 import com.ghasix.util.LogUtil;
 
@@ -29,6 +30,7 @@ public class ControllerAop {
     private final Logger logger = LoggerFactory.getLogger(ControllerAop.class);
     
     private TidManager tidMgr;
+    private CodeMsgManager codeMsgMgr;
 
     @Around("execution(* com.ghasix.controller..*.*(..))") // 컨트롤러 AoP
     public Object aroundController(ProceedingJoinPoint pjp) {
@@ -61,7 +63,6 @@ public class ControllerAop {
 
                     if (ctrReturn instanceof ApiResult) {
                         apiResult = (ApiResult) ctrReturn;
-                        apiResult.controllerCompact(tId);
                     }
                     else if (ctrReturn instanceof ResponseEntity<?>) {
                         ResponseEntity<ApiResult> responseEntity = (ResponseEntity<ApiResult>) ctrReturn;

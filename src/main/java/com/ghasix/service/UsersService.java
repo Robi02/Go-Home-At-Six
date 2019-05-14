@@ -6,6 +6,8 @@ import com.ghasix.datas.domain.Users;
 import com.ghasix.datas.domain.UsersRepository;
 import com.ghasix.datas.enums.UsersStatus;
 import com.ghasix.datas.result.ApiResult;
+import com.ghasix.manager.ApiResultManager;
+import com.robi.util.MapUtil;
 import com.robi.util.StringUtil;
 
 import org.slf4j.Logger;
@@ -22,6 +24,7 @@ public class UsersService implements IUsersService {
 
     private UserJwtService userJwtSvc;
     private UsersRepository userRepo;
+    private ApiResultManager apiResultMgr;
 
     // 회원 존재여부, 서비스 접근유효성등 검사
     public ApiResult checkUserStatus(String userJwt) {
@@ -45,12 +48,12 @@ public class UsersService implements IUsersService {
         }
         catch (Exception e) {
             logger.error("JPA Select Exception!", e);
-            return ApiResult.make("10101"); // 회원 DB조회중 오류가 발생했습니다.
+            return apiResultMgr.make("10101", ApiResult.class); // 회원 DB조회중 오류가 발생했습니다.
         }
 
         if (selectedUser == null) {
             logger.info("Fail to find user. (email:" + email + ")");
-            return ApiResult.make("10001"); // 회원 정보가 존재하지 않습니다.
+            return apiResultMgr.make("10001", ApiResult.class); // 회원 정보가 존재하지 않습니다.
         }
 
         UsersStatus status = selectedUser.getStatus();
@@ -58,19 +61,19 @@ public class UsersService implements IUsersService {
         if (!status.equals(UsersStatus.NORMAL)) {
             if (status.equals(UsersStatus.SLEEPING)) {
                 logger.info("User found but, status is '" + status.getValue() + "'. (email:" + email + ")");
-                return ApiResult.make("10004"); // 휴면중인 회원입니다.
+                return apiResultMgr.make("10004", ApiResult.class); // 휴면중인 회원입니다.
             }
             else if (status.equals(UsersStatus.BLACKLIST)) {
                 logger.info("User found but, status is '" + status.getValue() + "'. (email:" + email + ")");
-                return ApiResult.make("10005"); // 블랙리스트 회원입니다.
+                return apiResultMgr.make("10005", ApiResult.class); // 블랙리스트 회원입니다.
             }
             else if (status.equals(UsersStatus.DEREGISTERED)) {
                 logger.info("User found but, status is '" + status.getValue() + "'. (email:" + email + ")");
-                return ApiResult.make("10006"); // 탈퇴한 회원입니다.
+                return apiResultMgr.make("10006", ApiResult.class); // 탈퇴한 회원입니다.
             }
             else {
                 logger.info("User found but, status is 'Undefined'. (email:" + email + ")");
-                return ApiResult.make("10003"); // 회원 상태값이 미정의된 값입니다.
+                return apiResultMgr.make("10003", ApiResult.class); // 회원 상태값이 미정의된 값입니다.
             }
         }
 
@@ -78,18 +81,18 @@ public class UsersService implements IUsersService {
 
         if (accessibleTime != null && System.currentTimeMillis() < accessibleTime) {
             logger.info("User found but, accessibleTime NOT reached. (accessibleTime:" + accessibleTime + ")");
-            return ApiResult.make("10002"); // 아직 사용할 수 없는 계정입니다.
+            return apiResultMgr.make("10002", ApiResult.class); // 아직 사용할 수 없는 계정입니다.
         }
 
         logger.info("User found and authorized! (selectedUser:" + selectedUser.toString() + ")");
-        return ApiResult.make("00000", "selectedUser", selectedUser);
+        return apiResultMgr.make("00000", MapUtil.toMap("selectedUser", selectedUser), ApiResult.class);
     }
 
     // 회원 추가
     public ApiResult insertUser(String email, String name) {
         if (email == null || name == null) {
             logger.error("'email' or 'name' is null! (email:" + email + ", name:" + name + ")");
-            return ApiResult.make("00101"); // 필수 인자값이 비었습니다.
+            return apiResultMgr.make("00101", ApiResult.class); // 필수 인자값이 비었습니다.
         }
 
         email = email.trim();
@@ -97,12 +100,12 @@ public class UsersService implements IUsersService {
 
         if (StringUtil.isEmail(email) == false) {
             logger.error("'email' is NOT correct! (email:" + email + ")");
-            return ApiResult.make("00103"); // 올바른 이메일 형식이 아닙니다.
+            return apiResultMgr.make("00103", ApiResult.class); // 올바른 이메일 형식이 아닙니다.
         }
 
         if (name.length() == 0) {
             logger.error("'name's length is zero!");
-            return ApiResult.make("00105"); // 이름이 너무 짧습니다.
+            return apiResultMgr.make("00105", ApiResult.class); // 이름이 너무 짧습니다.
         }
 
         Users selectedUser = null;
@@ -112,12 +115,12 @@ public class UsersService implements IUsersService {
         }
         catch (Exception e) {
             logger.error("JPA Select Exception!", e);
-            return ApiResult.make("10101"); // 회원 DB조회중 오류가 발생했습니다.
+            return apiResultMgr.make("10101", ApiResult.class); // 회원 DB조회중 오류가 발생했습니다.
         }
 
         if (selectedUser != null) {
             logger.error("'selectedUser' is NOT null! email duplicated! (email:" + email + ")");
-            return ApiResult.make("00104"); // 사용중인 이메일입니다.
+            return apiResultMgr.make("00104", ApiResult.class); // 사용중인 이메일입니다.
         }
 
         try { // JPA - Insert
@@ -138,10 +141,10 @@ public class UsersService implements IUsersService {
         }
         catch (Exception e) {
             logger.error("JPA Insert Exception!", e);
-            return ApiResult.make("10102"); // 회원 DB추가중 오류가 발생했습니다.
+            return apiResultMgr.make("10102", ApiResult.class); // 회원 DB추가중 오류가 발생했습니다.
         }
 
         logger.info("New users inserted! (email:" + email + ")");
-        return ApiResult.make();
+        return apiResultMgr.make(ApiResult.class);
     }
 }

@@ -8,6 +8,7 @@ import com.ghasix.datas.domain.Users;
 import com.ghasix.datas.dto.PostCommutesDto;
 import com.ghasix.datas.dto.PutCommutesDto;
 import com.ghasix.datas.result.ApiResult;
+import com.ghasix.manager.ApiResultManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ public class CommutesService implements ICommutesService {
 
     private UsersService usersSvc;
     private CommutesRepository commutesRepo;
+    private ApiResultManager apiResultMgr;
 
     @Override
     public ApiResult selectCommutesAll(String userJwt) {
@@ -43,12 +45,12 @@ public class CommutesService implements ICommutesService {
     public ApiResult insertCommutes(String userJwt, PostCommutesDto postCommutesDto) {
         if (userJwt == null) {
             logger.error("'userJwt' is null!");
-            return ApiResult.make("00202"); // 회원토큰 값이 비었습니다.
+            return apiResultMgr.make("00202", ApiResult.class); // 회원토큰 값이 비었습니다.
         }
 
         if (postCommutesDto == null) {
             logger.error("'postCommutesDto' is null!");
-            return ApiResult.make("00107"); // 필수 인자값이 비었습니다.
+            return apiResultMgr.make("00107", ApiResult.class); // 필수 인자값이 비었습니다.
         }
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
@@ -62,7 +64,7 @@ public class CommutesService implements ICommutesService {
         
         if (ownUser == null) {
             logger.error("'ownUser' is null!");
-            return ApiResult.make("00102"); // 서버에서 값 획득에 실패했습니다.
+            return apiResultMgr.make("00102", ApiResult.class); // 서버에서 값 획득에 실패했습니다.
         }
 
         // JPA - Insert
@@ -83,11 +85,11 @@ public class CommutesService implements ICommutesService {
         }
         catch (Exception e) {
             logger.error("JPA Insert Exception!", e);
-            return ApiResult.make("20102"); // 출퇴근기록 DB추가중 오류가 발생했습니다.
+            return apiResultMgr.make("20102", ApiResult.class); // 출퇴근기록 DB추가중 오류가 발생했습니다.
         }
 
         logger.info("Insert new commutes SUCCESS! (insertCommutes:" + insertCommutes.toString() + ")");
-        return ApiResult.make();
+        return apiResultMgr.make(ApiResult.class);
     }
 
     @Override

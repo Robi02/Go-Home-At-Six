@@ -5,8 +5,10 @@ import java.util.Map;
 
 import com.ghasix.datas.dto.PostUsersDto;
 import com.ghasix.datas.result.ApiResult;
+import com.ghasix.manager.ApiResultManager;
 import com.ghasix.manager.UserJwtManager;
 import com.ghasix.service.UsersService;
+import com.robi.util.MapUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,13 +28,12 @@ public class UsersRestController {
 
     private UsersService usersSvc;
     private UserJwtManager userJwtMgr;
+    private ApiResultManager apiResultMgr;
 
     @GetMapping("/users/{email}/jwt")
     public ApiResult getUserJwt(@PathVariable("email") String email) {
         // Test
-        Map<String, Object> rtMap = new HashMap<String, Object>();
-        rtMap.put("userJwt", userJwtMgr.encodeUserJwt(email));
-        return ApiResult.make(rtMap);
+        return apiResultMgr.make(MapUtil.toMap("userJwt", userJwtMgr.encodeUserJwt(email)), ApiResult.class);
     }
 
     @PostMapping("/users")

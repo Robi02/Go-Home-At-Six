@@ -33,7 +33,8 @@ public class CodeMsgManager extends AbsManager {
 	private static final Logger logger = LoggerFactory.getLogger(CodeMsgManager.class);
 	
     // [Class private variables]
-    private Map<String, Map<String, String>> localeMap = null;
+    private static Map<String, Map<String, String>> localeMap = null;
+    private static String defaultLocale = null;
 	private Environment env;
 	
 	// [Class public constants]
@@ -50,9 +51,19 @@ public class CodeMsgManager extends AbsManager {
 
         String[] xmlPaths = env.getProperty("codeMsgMgr.codeMsgXmlPaths", String[].class);
 
+        if (xmlPaths == null) {
+            logger.error("'xmlPaths' is null! In file config.properties's 'codeMsgMgr.defaultLocale' value MISSING!");
+            return false;
+        }
+
         if (xmlPaths.length % 2 != 0) {
             logger.error("Locale-Language file length is NOT matched! (xmlPathsCnt:" + xmlPaths.length + ")");
             return false;
+        }
+
+        if ((defaultLocale = env.getProperty("codeMsgMgr.defaultLocale")) == null) {
+            logger.warn("In file config.properties's 'codeMsgMgr.defaultLocale' is MISSING! use default value 'ko'");
+            defaultLocale = "ko";
         }
 
         // 지역코드 구분 해시맵 생성
@@ -160,16 +171,21 @@ public class CodeMsgManager extends AbsManager {
             }
         }
 
-        Map<String, String> msgCodeMap = localeMap.get(locale);
+        Map<String, String> msgCodeMap = this.localeMap.get(locale);
 
         if (msgCodeMap == null) {
-            localeMap.get("ko");
+            msgCodeMap = this.localeMap.get(this.defaultLocale);
+        }
+
+        if (msgCodeMap == null) {
+            logger.error("FAIL to find locale '" + locale + "' from code-msgs.xml file!");
+            return null;
         }
         
 		String msg = msgCodeMap.get(code);
 		
 		if (msg == null) {
-			logger.error("미정의 메시지코드 '" + code + "'!");
+			logger.error("Undefined message code '" + code + "'!");
 			msg = msgCodeMap.get(SYSTEM_FAIL_CODE);
 		}
 		
@@ -178,6 +194,6 @@ public class CodeMsgManager extends AbsManager {
     
     // 코드에 해당하는 메시지 반환
 	public String getMsg(String code) {
-        return getMsg("ko", code);
+        return getMsg(this.defaultLocale, code);
 	}
 }
