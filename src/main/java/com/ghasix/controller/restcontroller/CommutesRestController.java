@@ -28,17 +28,10 @@ public class CommutesRestController {
 
     CommutesService commutesSvc;
 
-    @GetMapping("/commutes/time/all") // 출퇴근 기록 전체 조회
+    @GetMapping("/commutes/all") // 출퇴근 기록 전체 조회
     public ApiResult getCommutesTimeAll(
         @RequestHeader("userJwt") String userJwt) {
-        return null;
-    }
-
-    @GetMapping("/commutes/{id}") // 특정 출퇴근 기록 조회
-    public ApiResult getCommutesById(
-        @PathVariable("id") long id,
-        @RequestHeader("userJwt") String userJwt) {
-        return null;
+        return commutesSvc.selectCommutesAll(userJwt);
     }
 
     @GetMapping("/commutes/time/{beginTime}-{endTime}") // 출퇴근 기록 범위 조회
@@ -46,7 +39,14 @@ public class CommutesRestController {
         @PathVariable("beginTime") long beginTime,
         @PathVariable("endTime") long endTime,
         @RequestHeader("userJwt") String userJwt) {
-        return null;
+        return commutesSvc.selectCommutesByTime(userJwt, beginTime, endTime);
+    }
+
+    @GetMapping("/commutes/{id}") // 특정 출퇴근 기록 조회
+    public ApiResult getCommutesById(
+        @PathVariable("id") long id,
+        @RequestHeader("userJwt") String userJwt) {
+        return commutesSvc.selectCommutesById(userJwt, id);
     }
 
     @PostMapping("/commutes") // 출퇴근 기록 추가
