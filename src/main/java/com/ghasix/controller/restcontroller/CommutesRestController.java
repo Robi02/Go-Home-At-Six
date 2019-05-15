@@ -62,12 +62,12 @@ public class CommutesRestController {
         @PathVariable("id") long id,
         @RequestHeader("userJwt") String userJwt,
         @RequestBody PutCommutesDto putCommutesDto) {
-        return null;
+        return commutesSvc.updateCommutes(userJwt, id, putCommutesDto);
     }
 
     @DeleteMapping("/commutes/{id}") // 특정 출퇴근 기록 삭제
     public ApiResult deleteCommutes(@PathVariable("id") long id,
         @RequestHeader("userJwt") String userJwt) {
-        return null;
+        return commutesSvc.deleteCommutes(userJwt, id);
     }
 }

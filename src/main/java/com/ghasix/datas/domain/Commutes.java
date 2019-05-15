@@ -41,8 +41,9 @@ public class Commutes {
     @Column(name = "memo", length = 256) // 메모
     private String memo;
 
-    @Builder
-    public Commutes(Users ownUserId, String commuteCompanyName, Long checkInTime, Long checkOutTime, String memo) {
+    @Builder(toBuilder = true)
+    public Commutes(Long id, Users ownUserId, String commuteCompanyName, Long checkInTime, Long checkOutTime, String memo) {
+        this.id = id;
         this.ownUserId = ownUserId;
         this.commuteCompanyName = commuteCompanyName;
         this.checkInTime = checkInTime;

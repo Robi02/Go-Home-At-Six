@@ -53,7 +53,7 @@ public class Users {
     @Column(name = "accessible_time")
     private Long accessibleTime;
 
-    @Builder
+    @Builder(toBuilder = true)
     public Users(String email, String name, Integer accessLevel, UsersStatus status,
                     Long joinTime, Long lastLoginTime, Long accessibleTime) {
         this.email = email;
