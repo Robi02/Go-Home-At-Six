@@ -329,24 +329,28 @@ public class CommutesService implements ICommutesService {
             return apiResultMgr.make("00102", ApiResult.class); // 서버에서 값 획득에 실패했습니다.
         }
 
+        Integer deletedRows = null;
+
         // JPA - Delete
         try {
             /**
              *      DELETE FROM commutes
              *      WHERE id = {id} AND own_user_id = {ownUser.id}
              */
-            commutesRepo.deleteByIdAndOwnUserId(commutesId, ownUser);
+            deletedRows = commutesRepo.deleteByIdAndOwnUserId(commutesId, ownUser);
         }
         catch (Exception e) {
-            logger.error("JPA Update Exception!", e);
+            logger.error("JPA Delete Exception!", e);
             return apiResultMgr.make("20104", ApiResult.class); // 출퇴근기록 DB삭제중 오류가 발생했습니다.
         }
 
-        // 삭제 안돼도 삭제했다고 나올 수 있음... 영향받은 컬럼 개수 반환 안되나?
-        // Commutes에 대한 기본 CRUD는 완료!
-        // 코드 최적화관련해서 할게 있지만 일단 생략하고 콘텐츠 진도부터 나가보자.
-        // 프론트 페이지 만들면 되나? @@
-        logger.info("Delete commutes SUCCESS! (ownUser:" + ownUser.getEmail() + ", commutesId:" + commutesId + ")");
+        if (deletedRows > 0) {
+            logger.info("No commutes for delete! (ownUser:" + ownUser.getEmail() + ", commutesId:" + commutesId + ")");
+        }
+        else {
+            logger.info("Delete commutes SUCCESS! (ownUser:" + ownUser.getEmail() + ", commutesId:" + commutesId + ")");
+        }
+        
         return apiResultMgr.make(ApiResult.class);
     }
 }
