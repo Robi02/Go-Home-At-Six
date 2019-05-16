@@ -11,8 +11,23 @@ public class TestController {
 
     private static Logger logger = LoggerFactory.getLogger(TestController.class);
 
-    @GetMapping("/test")
-    public ModelAndView test() {
+    @GetMapping("/")
+    public ModelAndView index() {
         return new ModelAndView("index");
+    }
+
+    @GetMapping("/record")
+    public ModelAndView record() {
+        return new ModelAndView("commutes-record");
+    }
+    
+    @GetMapping("/list")
+    public ModelAndView list() {
+        return new ModelAndView("commutes-list");
+    }
+
+    @GetMapping("/statistics")
+    public ModelAndView statistics() {
+        return new ModelAndView("commutes-statistics");
     }
 }
