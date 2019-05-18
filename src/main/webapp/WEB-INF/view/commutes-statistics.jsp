@@ -12,10 +12,8 @@
 </head>
 <body class="bg-secondary">
 	<div class="container-fluid">
-		<!-- Top Navigator -->
-		<%@ include file="./top-navigator.jsp" %>
 		<!-- What's here? -->
-		<!-- ... -->
+		<h1>통계 페이지</h1>
 	</div>
 </body>
 </html>

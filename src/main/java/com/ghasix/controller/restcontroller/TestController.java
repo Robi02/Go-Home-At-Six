@@ -16,6 +16,11 @@ public class TestController {
         return new ModelAndView("index");
     }
 
+    @GetMapping("/main")
+    public ModelAndView main() {
+        return new ModelAndView("main-frame");
+    }
+
     @GetMapping("/record")
     public ModelAndView record() {
         return new ModelAndView("commutes-record");

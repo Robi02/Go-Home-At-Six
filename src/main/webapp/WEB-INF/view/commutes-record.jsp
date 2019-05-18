@@ -7,13 +7,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<!-- Common Head -->
 	<%@ include file="./head-include.jsp" %>
+	<!-- Page Script -->
+	<script type="text/javascript" src="/view-js/commutes-record.js?ver=<%=System.currentTimeMillis()%>"></script>
   <!-- Title -->
   <title>출퇴근 기록</title>
 </head>
 <body class="bg-secondary">
 	<div class="container-fluid">
-		<!-- Top Navigator -->
-		<%@ include file="./top-navigator.jsp" %>
 		<!-- Calendar -->
 		<div class="row justify-content-center">
 			<div class="col-11 pt-2 pb-2 rounded">
