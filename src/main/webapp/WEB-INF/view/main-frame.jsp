@@ -11,8 +11,8 @@
 	<script type="text/javascript" src="/view-js/main-frame.js?ver=<%=System.currentTimeMillis()%>"></script>
 	<!-- Page CSS -->
 	<link rel="stylesheet" href="/view-css/main-frame.css?ver=<%=System.currentTimeMillis()%>">
-  <!-- Title -->
-  <title>6시 칼퇴근!</title>
+	<!-- Title -->
+	<title>6시 칼퇴근!</title>
 </head>
 <body class="bg-secondary">
 	<div class="container-fluid">

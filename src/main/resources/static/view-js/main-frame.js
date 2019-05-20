@@ -1,12 +1,19 @@
 // Global
-var mf_userJwt					 = $.cookie('userJwt');
-var mf_apiDomain         = 'http://localhost:8080';
-var mf_recordPageURL     = mf_apiDomain + '/record';
-var mf_listPageURL       = mf_apiDomain + '/list';
-var mf_statisticsPageURL = mf_apiDomain + '/statistics';
+var mf_userJwt           = null;
+var mf_apiDomain         = null;
+var mf_recordPageURL     = null;
+var mf_listPageURL       = null;
+var mf_statisticsPageURL = null;
 
 // Page initializer
 $(document).ready(function() {
+	// Init Global
+	mf_userJwt           = $.cookie('userJwt');
+	mf_apiDomain         = 'http://localhost:8080';
+	mf_recordPageURL     = mf_apiDomain + '/record';
+	mf_listPageURL       = mf_apiDomain + '/list';
+	mf_statisticsPageURL = mf_apiDomain + '/statistics';
+
 	// Update Navi UI
 	updateNaviUI();
 

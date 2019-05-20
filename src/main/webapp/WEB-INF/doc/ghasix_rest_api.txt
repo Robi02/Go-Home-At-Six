@@ -83,7 +83,8 @@
 | ReqHeader : "userJwt"(R)                                                                       |
 | ReqBody   : -                                                                                  |
 | ResHeader :                                                                                    |
-| ResBody   : {"id", "commuteCompanyName", "checkInTime", "checkOutTime", "memo"}                |
+| ResBody   : selectedCommutes :                                                                 |
+|             {"id", "commuteCompanyName", "checkInTime", "checkOutTime", "memo"}                |
 | Comment   :                                                                                    |
 |                                                                                                |
 +------------------------------------------------------------------------------------------------+
@@ -94,7 +95,8 @@
 | ReqHeader : "userJwt"(R)                                                                       |
 | ReqBody   : -                                                                                  |
 | ResHeader :                                                                                    |
-| ResBody   : [{"id", "commuteCompanyName", "checkInTime", "checkOutTime", "memo"}]              |
+| ResBody   : selectedCommutesList :                                                             |
+|             [{"id", "commuteCompanyName", "checkInTime", "checkOutTime", "memo"}]              |
 | Comment   :                                                                                    |
 |                                                                                                |
 +------------------------------------------------------------------------------------------------+
@@ -105,7 +107,20 @@
 | ReqHeader : "userJwt"(R)                                                                       |
 | ReqBody   : -                                                                                  |
 | ResHeader :                                                                                    |
-| ResBody   : [{"id", "commuteCompanyName", "checkInTime", "checkOutTime", "memo"}]              |
+| ResBody   : selectedCommutesList :                                                             |
+|             [{"id", "commuteCompanyName", "checkInTime", "checkOutTime", "memo"}]              |
+| Comment   :                                                                                    |
+|                                                                                                |
++------------------------------------------------------------------------------------------------+
+| Service   : 마지막 출근 기록 조회                                                              |
+| Access    : Public                                                                             |
+| URL       : /commutes/last                                                                     |
+| Method    : GET                                                                                |
+| ReqHeader : "userJwt"(R)                                                                       |
+| ReqBody   : -                                                                                  |
+| ResHeader :                                                                                    |
+| ResBody   : lastCommutes :                                                                     |
+|             {"id", "commuteCompanyName", "checkInTime", "checkOutTime", "memo"}                |
 | Comment   :                                                                                    |
 |                                                                                                |
 +------------------------------------------------------------------------------------------------+
@@ -114,7 +129,7 @@
 | URL       : /commutes                                                                          |
 | Method    : POST                                                                               |
 | ReqHeader : "userJwt"(R)                                                                       |
-| ReqBody   : {"commuteCompanyName", "checkInTime", "checkOutTime", "memo"}                      |
+| ReqBody   : postCommutesDto : {"commuteCompanyName", "checkInTime", "checkOutTime", "memo"}    |
 | ResHeader :                                                                                    |
 | ResBody   :                                                                                    |
 | Comment   :                                                                                    |
@@ -125,7 +140,7 @@
 | URL       : /commutes/{id}                                                                     |
 | Method    : PUT                                                                                |
 | ReqHeader : "userJwt"(R)                                                                       |
-| ReqBody   : {"commuteCompanyName", "checkInTime", "checkOutTime", "memo"}                      |
+| ReqBody   : putCommutesDto : {"commuteCompanyName", "checkInTime", "checkOutTime", "memo"}     |
 | ResHeader :                                                                                    |
 | ResBody   :                                                                                    |
 | Comment   :                                                                                    |

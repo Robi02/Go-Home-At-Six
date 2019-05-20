@@ -12,6 +12,6 @@
 <!-- fontawesome 5.8.1 -->
 <link rel="stylesheet" href="/lib/fontawesome-5.8.1/css/fontawesome-5.8.1.css">
 <!-- common -->
-<script type="text/javascript" src="/common/js/common.js"></script>
+<script type="text/javascript" src="/common/js/common.js?ver=<%=System.currentTimeMillis()%>"></script>
 <!-- Go-Home-At-Six API -->
-<script type="text/javascript" src="/common/js/ghasixapi.js"></script>
+<script type="text/javascript" src="/common/js/ghasixapi.js?ver=<%=System.currentTimeMillis()%>"></script>
