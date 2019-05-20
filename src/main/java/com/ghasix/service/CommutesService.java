@@ -156,6 +156,52 @@ public class CommutesService implements ICommutesService {
     }
 
     @Override
+    public ApiResult selectCommutesLast(String userJwt) {
+        if (userJwt == null) {
+            logger.error("'userJwt' is null!");
+            return apiResultMgr.make("00202", ApiResult.class); // 회원토큰 값이 비었습니다.
+        }
+
+        ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
+
+        if (checkUserSvcResult.checkResultCodeSuccess() == false) {
+            logger.error("'checkUserSvcResult's response code is FAIL!");
+            return checkUserSvcResult;
+        }
+
+        Users ownUser = (Users) checkUserSvcResult.getResultData("selectedUser");
+        
+        if (ownUser == null) {
+            logger.error("'ownUser' is null!");
+            return apiResultMgr.make("00102", ApiResult.class); // 서버에서 값 획득에 실패했습니다.
+        }
+
+        Commutes lastCommutes = null;
+
+        // JPS - Select
+        try {
+            /**
+             *      SELECT *
+             *      FROM commutes
+             *      WHERE own_user_id = {ownUser.id} AND check_out_time = 0
+             */
+            List<Commutes> selectedCommutesList = commutesRepo.findByOwnUserIdAndCheckOutTime(ownUser, 0L);
+
+            if (selectedCommutesList != null && selectedCommutesList.size() > 0) {
+                // 퇴근시간이 기입안된 결과가 여러개면, 가장 오래된 결과부터 반환
+                lastCommutes = selectedCommutesList.get(0);
+            }
+        }
+        catch (Exception e) {
+            logger.error("JPA Insert Exception!", e);
+            return apiResultMgr.make("20102", ApiResult.class); // 출퇴근기록 DB추가중 오류가 발생했습니다.
+        }
+
+        logger.info("Select last commutes SUCCESS! (ownUser:" + ownUser.getEmail() + ")");
+        return apiResultMgr.make(MapUtil.toMap("lastCommutes", lastCommutes), ApiResult.class);
+    }
+
+    @Override
     public ApiResult insertCommutes(String userJwt, PostCommutesDto postCommutesDto) {
         if (userJwt == null) {
             logger.error("'userJwt' is null!");

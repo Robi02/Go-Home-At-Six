@@ -1,7 +1,5 @@
 package com.ghasix.controller.restcontroller;
 
-import java.util.Map;
-
 import com.ghasix.datas.dto.PostCommutesDto;
 import com.ghasix.datas.dto.PutCommutesDto;
 import com.ghasix.datas.result.ApiResult;
@@ -49,11 +47,17 @@ public class CommutesRestController {
         return commutesSvc.selectCommutesById(userJwt, id);
     }
 
+    @GetMapping("/commutes/last") // 마지막 출퇴근 기록 조회
+    public ApiResult getCommutesLastCheckIn(
+        @RequestHeader("userJwt") String userJwt
+    ) {
+        return commutesSvc.selectCommutesLast(userJwt);
+    }
+
     @PostMapping("/commutes") // 출퇴근 기록 추가
     public ApiResult postCommutes(
         @RequestHeader("userJwt") String userJwt,
-        @RequestBody PostCommutesDto postCommutesDto)
-    {
+        @RequestBody PostCommutesDto postCommutesDto) {
         return commutesSvc.insertCommutes(userJwt, postCommutesDto);
     }
 
