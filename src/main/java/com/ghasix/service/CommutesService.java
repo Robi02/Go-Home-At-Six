@@ -256,7 +256,7 @@ public class CommutesService implements ICommutesService {
                                                  .memo(memo)
                                                  .build();
             
-            if (commutesRepo.save(insertedCommutes) == null) {
+            if ((insertedCommutes = commutesRepo.save(insertedCommutes)) == null) {
                 logger.error("'.save()'for insert return null!");
                 throw new Exception();
             }
@@ -267,7 +267,7 @@ public class CommutesService implements ICommutesService {
         }
 
         logger.info("Insert new commutes SUCCESS! (ownUser:" + ownUser.getEmail() + ")");
-        return apiResultMgr.make(ApiResult.class);
+        return apiResultMgr.make(MapUtil.toMap("insertedCommutes", insertedCommutes), ApiResult.class);
     }
 
     @Override
@@ -330,7 +330,7 @@ public class CommutesService implements ICommutesService {
              *      WHERE id = {commutesId} AND own_user_id = {ownUser.id};
              */
             Commutes updatedCommutes = (originCommutes.toBuilder()).commuteCompanyName(commuteCompanyName)
-                                                                   .checkInTime(checkInTime)
+                                                                   .checkInTime(checkInTime == 0 ? originCommutes.getCheckInTime() : checkInTime)
                                                                    .checkOutTime(checkOutTime)
                                                                    .memo(memo)
                                                                    .build();
