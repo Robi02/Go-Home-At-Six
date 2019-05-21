@@ -131,7 +131,8 @@
 | ReqHeader : "userJwt"(R)                                                                       |
 | ReqBody   : postCommutesDto : {"commuteCompanyName", "checkInTime", "checkOutTime", "memo"}    |
 | ResHeader :                                                                                    |
-| ResBody   :                                                                                    |
+| ResBody   : insertedCommutes :                                                                 |
+|             {"id", "commuteCompanyName", "checkInTime", "checkOutTime", "memo"}                |
 | Comment   :                                                                                    |
 |                                                                                                |
 +------------------------------------------------------------------------------------------------+

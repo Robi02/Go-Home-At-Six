@@ -20,17 +20,19 @@ $(document).ready(function() {
 	// Attach navi button events
 	$('#button_navi_join').on('click', function(event) {
 		// modal
-		updateNaviUI();
+		location.reload();
 	});
 	$('#button_navi_login').on('click', function(event) {
 		// modal
 		// test
 		mf_userJwt = $.cookie('userJwt', '78SnY6OqbInOmw38sUWa_gsk4lFGnd8BUCqHFrZ_Na1687+EqPvphzBr_eKpksZR0fEjNGpP4no4TOtvmleex2y50COSbJzKchKVPQBP51g4hXh8r4eDna4FkqXyttfQKcjfcYDk5imv5SlWmwomBrrjuuvW5wecGtVfysQI2eNzZTZdHF2gJ3QRNdCuaA5Hu8aeaoBaxSDRkbIU51IQrG9HR_ikVlEMzB3bomcDx8cWwJRXF+Rr7uNRRijvXMWiMg0b1YsGcs8H95kRSz3QvsEuBVx2RS6LHCjcZOkLXZM-');
+		$.cookie('test', 'testval');
 		// test
-		updateNaviUI();
+		location.reload();
 	});
 	$('#button_navi_logout').on('click', function(event) {
-		$.removeCookie("userJwt");
+		$.removeCookie('userJwt');
+		$.removeCookie('lastCheckInCommutes');
 		location.reload();
 	});
 

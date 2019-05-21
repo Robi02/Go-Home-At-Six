@@ -1,12 +1,13 @@
 var GHASIX_API = {
     // API URL
     apiURL : {
-        selectById   : '/commutes/{0}',
-        selectAll    : '/commutes/time/all',
-        selectByTime : '/commutes/time/{0}-{1}',
-        checkIn      : '/commutes',
-        checkOut     : '/commutes/{0}'
-		},
+        selectById        : '/commutes/{0}',
+        selectAll         : '/commutes/time/all',
+        selectByTime      : '/commutes/time/{0}-{1}',
+        selectLastCheckIn : '/commutes/last',
+        checkIn           : '/commutes',
+        checkOut          : '/commutes/{0}'
+    },
 
     // AJAX API Call
     apiAjaxCall : function(httpMethod, apiURL, reqHeader, reqBody, alwaysFunc, doneFunc, failFunc) {
@@ -66,13 +67,13 @@ var GHASIX_API = {
             return null;
         }
 
-        var resultData = apiResult.resultData;
+        var resultData = apiResult.resultDatas;
 
         if (!resultData) {
             console.log("Parameter 'resultData' error! (resultData:" + resultData + ")");
             return null;
         }
 
-        return resultData.key;
+        return resultData[key];
     }
 }

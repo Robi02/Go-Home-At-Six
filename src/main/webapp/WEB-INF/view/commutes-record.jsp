@@ -14,8 +14,6 @@
 </head>
 <body class="bg-secondary">
 	<div class="container-fluid">
-		<!-- Data -->
-		<input type="hidden" id="input_last_checkin_commutes_id" value="-1"/>
 		<!-- Calendar -->
 		<div class="row justify-content-center">
 			<div class="col-11 pt-2 rounded">

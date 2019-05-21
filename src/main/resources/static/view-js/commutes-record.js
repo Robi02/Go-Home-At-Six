@@ -1,16 +1,33 @@
 // Global
-var cr_userJwt               = null;
-var cr_lastCheckinCommutesId = null;
+var cr_userJwt             = null;
+var cr_lastCheckinCommutes = null;
 
 // Page initializer
 $(document).ready(function() {
 	// Init Global
-	cr_userJwt               = window.parent.mf_userJwt;
-	cr_lastCheckinCommutesId = $.cookie('lastCheckinCommutesId');
+	cr_userJwt             = window.parent.mf_userJwt;
+	cr_lastCheckinCommutes = $.cookie('lastCheckInCommutes');
 
-	if (!cr_lastCheckinCommutesId) {
-		// [@]마지막 출근기록만있고 퇴근기록이 없는기록 검색
-		// [@]DB조회시 Users 데이터가 통째로 조회되는거 막아보자..
+	// Get last checkin commutes
+	if (!!cr_userJwt && !cr_lastCheckinCommutes) {
+		// from server
+		var reqHeader = { userJwt : cr_userJwt };
+
+		GHASIX_API.apiAjaxCall('GET', GHASIX_API.apiURL.selectLastCheckIn, reqHeader, null, null, function(apiResult) {
+			if (!GHASIX_API.checkResultSuccess(apiResult)) {
+				return;
+			}
+
+			var lastCheckInCommutes = $('#input_last_checkin_commutes_id').val(GHASIX_API.getResultData(apiResult, 'lastCommutes'));
+
+			if (!lastCheckInCommutes) { // no last commutes data
+				return;
+			}
+			
+			$.cookie('lastCheckInCommutes', lastCheckInCommutes);
+			cr_lastCheckinCommutes = lastCheckInCommutes;
+			// set timezone()
+		}, ajaxFail);
 	}
 
 	// Attach events
@@ -61,8 +78,7 @@ function checkOut() {
 		memo               : $('#textarea_memo').val()
 	};
 	
-	var lastCheckInCommutesId = cr_lastCheckinCommutesId;
-
+	var lastCheckInCommutesId = cr_lastCheckinCommutes.id;
 	var url = GHASIX_API.apiURL.checkOut;
 
 	GHASIX_API.apiAjaxCall('PUT', url.format(lastCheckInCommutesId), reqHeader, reqBody, null, checkOutSuccess, ajaxFail);
