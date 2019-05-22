@@ -68,7 +68,7 @@
 		<div class="row pt-2 pb-2 bg-dark justify-content-center align-items-center bg-light border-bottom border-secondary rounded d-none" id="div_working_time">
 			<div class="col-1"></div>
 			<div class="col pt-1 bg-info rounded">
-				<b>근무시간 : </b><span id="span_working_time">0시간 00분 00초</span>
+				<b>근무시간 : </b><span id="span_working_time">00시간 00분 00초</span>
 			</div>
 			<div class="col-1"></div>
 		</div>

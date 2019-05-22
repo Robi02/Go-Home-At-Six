@@ -1,3 +1,8 @@
+// Global
+var commutes_record_checkInTime  = 0;
+var commutes_record_checkOutTime = 0;
+var commutes_record_timer_on     = false;
+
 // Page initializer
 $(document).ready(function() {
 	// Get last check-in commutes (has userJwt but, no last check-in commutes)
@@ -39,17 +44,33 @@ $(document).ready(function() {
 
 	$('#button_check_out').on('click', function() {
 		// check-out button
+		commutes_record_checkOutTime = new Date().getTime();
+
 		var reqHeader = { 'userJwt' : $.cookie('userJwt') };
 		var reqBody = {
 			commuteCompanyName : $('#input_company_name').val(),
 			checkInTime        : null,
-			checkOutTime       : new Date().getTime(),
+			checkOutTime       : commutes_record_checkOutTime,
 			memo               : $('#textarea_memo').val()
 		};
 		var apiURL = GHASIX_API.apiURL.checkOut.format(JSON.parse($.cookie('lastCheckInCommutes')).id);
 	
 		GHASIX_API.apiAjaxCall('PUT', apiURL, reqHeader, reqBody, null, checkOutSuccess, ajaxFail);
 	});
+
+	// Working timer
+	setInterval(function() {
+		if (commutes_record_timer_on == true) {
+			var workingTimeMs = new Date() - new Date(commutes_record_checkInTime);
+			var hours = parseInt(workingTimeMs / 3600000);
+			var mins = parseInt(workingTimeMs / 60000 % 60);
+			var secs = parseInt(workingTimeMs / 1000 % 60);
+			var workingTimeStr = '{0}시간 {1}분 {2}초'.format(hours, mins, secs);
+
+			$('#div_working_time').removeClass('d-none');
+			$('#span_working_time').html(workingTimeStr);
+		}		
+	}, 1000);
 });
 
 // Check-in success
@@ -72,6 +93,11 @@ function checkOutSuccess(apiResult) {
 		$.removeCookie('lastCheckInCommutes');
 		alert('퇴근 기록 완료!');
 		updateButtonAndRecordTime();
+
+		var checkOutTime = new Date();
+	
+		$('#span_check_out_time').html(checkOutTime.format('HH시 mm분 ss초'));
+		$('#div_check_out_time').removeClass('d-none');
 	}
 	else {
 		alert(apiResult.resultMsg);
@@ -86,23 +112,32 @@ function ajaxFail() {
 // Update button and record time
 function updateButtonAndRecordTime() {
 	var lastCheckInCommutes = $.cookie('lastCheckInCommutes');
-	// 이제 파싱하자! [@]
-	// 왜 새로운 퇴근기록 정상 업뎃후에 ui표시가 이상한지도 확인 [@]
 
 	if (!lastCheckInCommutes) {
-		// show check-out
+		// show check-in btn (lastCheckInCommutes == undefined)
+		commutes_record_timer_on = false;
 		$('#div_check_in').removeClass('d-none');
 		$('#div_check_out').addClass('d-none');
+		return;
+	}
+	
+	// show check-out btn (has lastCheckInCommutes data)
+	$('#div_check_in').addClass('d-none');
+	$('#div_check_out').removeClass('d-none');
+
+	// start working timer and hide last check-out record
+	commutes_record_timer_on = true;
+	$('#div_check_out_time').addClass('d-none');
+
+	commutes_record_checkInTime = JSON.parse(lastCheckInCommutes).checkInTime;
+
+	if (!!commutes_record_checkInTime) {
+		var checkInTime = new Date(commutes_record_checkInTime);
+
+		$('#span_check_in_time').html(checkInTime.format('HH시 mm분 ss초'));
 		$('#div_check_in_time').removeClass('d-none');
-		$('#div_working_time').removeClass('d-none');
-		$('#div_check_out_time').removeClass('d-none');
 	}
 	else {
-		// show check-in
-		$('#div_check_in').addClass('d-none');
-		$('#div_check_out').removeClass('d-none');
-		$('#div_check_in_time').removeClass('d-none');
-		$('#div_working_time').removeClass('d-none');
-		$('#div_check_out_time').addClass('d-none');
+		$('#div_check_in_time').addClass('d-none');
 	}
 }
