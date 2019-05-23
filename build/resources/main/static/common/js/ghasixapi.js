@@ -1,6 +1,16 @@
 var GHASIX_API = {
+    // API URL
+    apiURL : {
+        selectById        : '/commutes/{0}',
+        selectAll         : '/commutes/time/all',
+        selectByTime      : '/commutes/time/{0}-{1}',
+        selectLastCheckIn : '/commutes/last',
+        checkIn           : '/commutes',
+        checkOut          : '/commutes/{0}'
+    },
+
     // AJAX API Call
-    ajaxApiCall : function(httpMethod, apiURL, reqHeader, reqBody, alwaysFunc, doneFunc, failFunc) {
+    apiAjaxCall : function(httpMethod, apiURL, reqHeader, reqBody, alwaysFunc, doneFunc, failFunc) {
         if (!httpMethod) {
             console.log("Parameter 'httpMethod' warning! (httpMethod:" + httpMethod + ")");
             console.log("'httpMethod' forcibly changed to 'GET'");
@@ -18,13 +28,13 @@ var GHASIX_API = {
             headers: reqHeader,
             type : 'json',
             contentType : 'application/json',
-            data : reqBody
+            data : JSON.stringify(reqBody)
         })
         .always(function(data_jqXHR, textStatus, jqXHR_errorThrown) {
             if (!!alwaysFunc) return alwaysFunc(data_jqXHR, textStatus, jqXHR_errorThrown);
         })
-        .done(function(apiResult, textStatus, jqXHR) {
-            if (!!doneFunc) return doneFunc(apiResult, textStatus, jqXHR);
+        .done(function(data, textStatus, jqXHR) {
+            if (!!doneFunc) return doneFunc(data.apiResult, textStatus, jqXHR);
             return true;
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -39,13 +49,13 @@ var GHASIX_API = {
             return false;
         }
 
-        if (resultData.resultCode != '00000') {
+        if (apiResult.resultCode != '00000') {
             return false;
         }
 
         return true;
-    },
-    // Get ResultData From API Result
+		},
+    // Get ResultData From API ResultData
     getResultData : function(apiResult, key) {
         if (!apiResult) {
             console.log("Parameter 'apiResult' error! (apiResult:" + apiResult + ")");
@@ -57,13 +67,13 @@ var GHASIX_API = {
             return null;
         }
 
-        var resultData = apiResult.resultData;
+        var resultData = apiResult.resultDatas;
 
         if (!resultData) {
             console.log("Parameter 'resultData' error! (resultData:" + resultData + ")");
             return null;
         }
 
-        return resultData.key;
+        return resultData[key];
     }
 }

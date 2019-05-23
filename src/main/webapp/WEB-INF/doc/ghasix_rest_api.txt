@@ -100,7 +100,7 @@
 | Comment   :                                                                                    |
 |                                                                                                |
 +------------------------------------------------------------------------------------------------+
-| Service   : 출퇴근 기록 범위 조회                                                              |
+| Service   : 출퇴근 기록 기간범위 조회                                                          |
 | Access    : Public                                                                             |
 | URL       : /commutes/time/{beginTime}-{endTime}                                               |
 | Method    : GET                                                                                |
