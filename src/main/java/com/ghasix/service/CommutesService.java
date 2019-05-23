@@ -101,7 +101,7 @@ public class CommutesService implements ICommutesService {
              *      FROM commutes
              *      WHERE ({checkInTime} BETWEEN {checkInTime} AND {checkOutTime}) AND (own_user_id = {ownUser.id})
              */
-            selectedCommutesList = commutesRepo.findByOwnUserIdAndCheckInTimeBetween(ownUser, beginTime, endTime);
+            selectedCommutesList = commutesRepo.findByOwnUserIdAndCheckInTimeBetweenOrderByCheckInTimeDesc(ownUser, beginTime, endTime);
         }
         catch (Exception e) {
             logger.error("JPA Exception!", e);
@@ -109,7 +109,7 @@ public class CommutesService implements ICommutesService {
         }
 
         logger.info("Select commutes SUCCESS! (email:" + ownUser.getEmail() + ", time:" + beginTime + "-" + endTime + ")");
-        return apiResultMgr.make(MapUtil.toMap("selectedCommutes", selectedCommutesList), ApiResult.class);
+        return apiResultMgr.make(MapUtil.toMap("selectedCommutesList", selectedCommutesList), ApiResult.class);
     }
 
     @Override
