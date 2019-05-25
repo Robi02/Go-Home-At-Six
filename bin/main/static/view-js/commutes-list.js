@@ -104,8 +104,8 @@ function listButtonTag(idx, checkInTime, checkOutTime) {
 		badgeStr = '일중';		
 	}
 	else {
-		// 8시간 5분 이내 (칼퇴)
-		if (workingTimeMs <= 3600000 * 8 + 60000 * 5) {
+		// 8시간 15분 이내 (칼퇴)
+		if (workingTimeMs <= 3600000 * 8 + 60000 * 15) {
 			badgeLevel = 'primary';
 			badgeStr = '칼퇴';
 		}
@@ -119,21 +119,40 @@ function listButtonTag(idx, checkInTime, checkOutTime) {
 			badgeLevel = 'warning';
 			badgeStr = '주의';
 		}
-		// 10시간 이내 (심각)
-		else if (workingTimeMs <= 3600000 * 10) {
+		// 10시간 이상 (심각)
+		else {
 			badgeLevel = 'error';
 			badgeStr = '심각';
 		}
-		// 그외 (야근)
-		else {
-			badgeLevel = 'dark';
-			badgeStr = '야근';
-		}
 	}
 
-	return ('<button type="button" \
+	return ('<button type="button" onclick="listButtonClick(' + idx + ')" data-toggle="modal" data-target="#exampleModalCenter"\
 	class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" \
 	id="btn_commutes_' + idx + '">\
 	<span><b>' + checkInDateStr + '</b> <small>(' + checkInTimeStr + ' ~ ' + (!checkOutTimeStr ? '' : checkOutTimeStr) + ')</small></span>\
 	<span class="badge badge-' + badgeLevel + ' badge-pill">' + badgeStr + '</span></button>');
+}
+
+function listButtonClick(idx) {
+	var commutes     = commutes_list_ary[idx];
+	var id           = commutes.id;
+	var checkInTime  = commutes.checkInTime;
+	var checkOutTime = commutes.checkOutTime;
+	var memo         = commutes.memo;
+
+	var modalTitle = $('#h5_commute_modal_title');
+	var modalCheckInTime = null;
+	var modalCheckOutTime = null;
+	var modalCommuteCompanyName = $('#input_commutes_modal_company_name');
+	var modalMemo = $('#input_commutes_modal_memo');
+}
+
+// Commutes modal function (delete)
+function deleteCommutesButtonClick() {
+
+}
+
+// Commutes modal function (modify)
+function modifyCommutesButtonClick() {
+
 }
