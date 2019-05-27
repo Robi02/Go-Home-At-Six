@@ -317,6 +317,8 @@ public class CommutesService implements ICommutesService {
         }
 
         // JPA - Update (Select and Save)
+        Commutes updatedCommutes = null;
+
         try {
             Commutes originCommutes = (Commutes) selectCommutesById(userJwt, commutesId).getResultData("selectedCommutes");
 
@@ -329,11 +331,11 @@ public class CommutesService implements ICommutesService {
              *      UPDATE commutes SET(... = ...)
              *      WHERE id = {commutesId} AND own_user_id = {ownUser.id};
              */
-            Commutes updatedCommutes = (originCommutes.toBuilder()).commuteCompanyName(commuteCompanyName)
-                                                                   .checkInTime(checkInTime == 0 ? originCommutes.getCheckInTime() : checkInTime)
-                                                                   .checkOutTime(checkOutTime)
-                                                                   .memo(memo)
-                                                                   .build();
+            updatedCommutes = (originCommutes.toBuilder()).commuteCompanyName(commuteCompanyName)
+                                                          .checkInTime(checkInTime == 0 ? originCommutes.getCheckInTime() : checkInTime)
+                                                          .checkOutTime(checkOutTime)
+                                                          .memo(memo)
+                                                          .build();
 
             if (commutesRepo.save(updatedCommutes) == null) {
                 logger.error("'.save()'for update return null!");
@@ -346,7 +348,7 @@ public class CommutesService implements ICommutesService {
         }
 
         logger.info("Update commutes SUCCESS! (ownUser:" + ownUser.getEmail() + ", commutesId:" + commutesId + ")");
-        return apiResultMgr.make(ApiResult.class);
+        return apiResultMgr.make(MapUtil.toMap("updatedCommutes", updatedCommutes), ApiResult.class);
     }
 
     @Override @Transactional

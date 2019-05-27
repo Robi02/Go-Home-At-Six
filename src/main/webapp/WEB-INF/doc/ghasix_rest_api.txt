@@ -141,9 +141,11 @@
 | URL       : /commutes/{id}                                                                     |
 | Method    : PUT                                                                                |
 | ReqHeader : "userJwt"(R)                                                                       |
-| ReqBody   : putCommutesDto : {"commuteCompanyName", "checkInTime", "checkOutTime", "memo"}     |
+| ReqBody   : putCommutesDto :                                                                   |
+|             {"commuteCompanyName", "checkInTime", "checkOutTime", "memo"}                      |
 | ResHeader :                                                                                    |
-| ResBody   :                                                                                    |
+| ResBody   : updatedCommutes :                                                                  |
+|             {"id", "commuteCompanyName", "checkInTime", "checkOutTime", "memo"}                |
 | Comment   :                                                                                    |
 |                                                                                                |
 +------------------------------------------------------------------------------------------------+

@@ -6,7 +6,9 @@ var GHASIX_API = {
         selectByTime      : '/commutes/time/{0}-{1}',
         selectLastCheckIn : '/commutes/last',
         checkIn           : '/commutes',
-        checkOut          : '/commutes/{0}'
+        checkOut          : '/commutes/{0}',
+        modifyById        : '/commutes/{0}',
+        deleteById        : '/commutes/{0}'
     },
 
     // AJAX API Call

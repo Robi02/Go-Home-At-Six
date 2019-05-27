@@ -68,6 +68,8 @@ function initList() {
 
 // Update commutes list
 function updateList() {
+	$('#div_commutes_list').empty();
+
 	if (!commutes_list_ary || commutes_list_ary.length == 0) {
 		$('#span_commutes_list_count').html('검색 결과 없음!');
 		$('#div_row_commutes_list').removeClass('d-none');
@@ -86,15 +88,18 @@ function updateList() {
 function listButtonTag(idx, checkInTime, checkOutTime) {
 	var checkInDate = new Date(checkInTime);
 	var checkInDateStr = checkInDate.format('yyyy.MM.dd (E)');
-	var checkInTimeStr = checkInDate.format('HH:mm:ss');
+	var checkInTimeStr = checkInDate.format('HH:mm');
 	var checkOutDate = !checkOutTime ? null : new Date(checkOutTime);
 	var checkOutTimeStr = null;
 	
 	if (!!checkOutDate) {
-		checkOutTimeStr = checkOutDate.format('HH:mm:ss');
+		checkOutTimeStr = checkOutDate.format('HH:mm');
 	}
 	
 	var workingTimeMs = checkOutTime - checkInTime;
+	var workingTimeHours = parseInt(workingTimeMs / 3600000);
+	var workingTimeMins = parseInt(workingTimeMs / 60000 % 60);
+	var workingTimeStr = (workingTimeHours + (workingTimeMins / 60.0)).toFixed(1) + 'h';
 	var badgeLevel = null;
 	var badgeStr = null;
 
@@ -121,7 +126,7 @@ function listButtonTag(idx, checkInTime, checkOutTime) {
 		}
 		// 10시간 이상 (심각)
 		else {
-			badgeLevel = 'error';
+			badgeLevel = 'danger';
 			badgeStr = '심각';
 		}
 	}
@@ -129,30 +134,137 @@ function listButtonTag(idx, checkInTime, checkOutTime) {
 	return ('<button type="button" onclick="listButtonClick(' + idx + ')" data-toggle="modal" data-target="#exampleModalCenter"\
 	class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" \
 	id="btn_commutes_' + idx + '">\
-	<span><b>' + checkInDateStr + '</b> <small>(' + checkInTimeStr + ' ~ ' + (!checkOutTimeStr ? '' : checkOutTimeStr) + ')</small></span>\
+	<span><b>' + checkInDateStr + '</b> <small>(' + checkInTimeStr + '~' + (!checkOutTimeStr ? '' : checkOutTimeStr + ' / ' + workingTimeStr) + ')</small></span>\
 	<span class="badge badge-' + badgeLevel + ' badge-pill">' + badgeStr + '</span></button>');
 }
 
 function listButtonClick(idx) {
-	var commutes     = commutes_list_ary[idx];
-	var id           = commutes.id;
-	var checkInTime  = commutes.checkInTime;
-	var checkOutTime = commutes.checkOutTime;
-	var memo         = commutes.memo;
+	var commutes           = commutes_list_ary[idx];
+	var id                 = commutes.id;
+	var checkInTime        = commutes.checkInTime;
+	var checkOutTime       = commutes.checkOutTime;
+	var checkInCompanyName = commutes.checkInCompanyName;
+	var memo               = commutes.memo;
 
-	var modalTitle = $('#h5_commute_modal_title');
-	var modalCheckInTime = null;
-	var modalCheckOutTime = null;
-	var modalCommuteCompanyName = $('#input_commutes_modal_company_name');
-	var modalMemo = $('#input_commutes_modal_memo');
-}
+	$('#input_modal_commutes_id').val(id);
 
-// Commutes modal function (delete)
-function deleteCommutesButtonClick() {
+	if (!!checkInTime) {
+		var checkInDate = new Date(checkInTime);
+		$('#h5_center_modal_title').html(checkInDate.format('yyyy.MM.dd (E)'));
+		$('#modal_input_check_in_year').val(checkInDate.format('yyyy'));
+		$('#modal_input_check_in_month').val(checkInDate.format('MM'));
+		$('#modal_input_check_in_date').val(checkInDate.format('dd'));
+		$('#modal_input_check_in_hour').val(checkInDate.format('HH'));
+		$('#modal_input_check_in_minute').val(checkInDate.format('mm'));
+		$('#modal_input_check_in_second').val(checkInDate.format('ss'));
+	}
 
+	var checkOutDate = null;
+
+	if (!checkOutTime) {
+		checkOutDate = new Date();
+	}
+	else {
+		checkOutDate = new Date(checkOutTime);
+	}
+
+	$('#modal_input_check_out_year').val(checkOutDate.format('yyyy'));
+	$('#modal_input_check_out_month').val(checkOutDate.format('MM'));
+	$('#modal_input_check_out_date').val(checkOutDate.format('dd'));
+	$('#modal_input_check_out_hour').val(checkOutDate.format('HH'));
+	$('#modal_input_check_out_minute').val(checkOutDate.format('mm'));
+	$('#modal_input_check_out_second').val(checkOutDate.format('ss'));
+
+	$('#input_commutes_modal_company_name').val(checkInCompanyName);
+	$('#input_commutes_modal_memo').val(memo);
 }
 
 // Commutes modal function (modify)
 function modifyCommutesButtonClick() {
+	if (!confirm('정말 수정할까요?')) {
+		return; // cancel
+	}
+	
+	var id = $('#input_modal_commutes_id').val();
+	var apiURL = GHASIX_API.apiURL.modifyById.format(id);
+	var reqHeader = { userJwt : $.cookie('userJwt') };
 
+	var checkInDate = new Date($('#modal_input_check_in_year').val(),
+							   $('#modal_input_check_in_month').val() - 1,
+							   $('#modal_input_check_in_date').val(),
+							   $('#modal_input_check_in_hour').val(),
+							   $('#modal_input_check_in_minute').val(),
+							   $('#modal_input_check_in_second').val(), 0);
+	var checkOutDate = new Date($('#modal_input_check_out_year').val(),
+							    $('#modal_input_check_out_month').val() - 1,
+							    $('#modal_input_check_out_date').val(),
+							    $('#modal_input_check_out_hour').val(),
+							    $('#modal_input_check_out_minute').val(),
+								$('#modal_input_check_out_second').val(), 0);
+	var checkInTimeStr = checkInDate.getTime();
+	var checkOutTimeStr = checkOutDate.getTime();
+
+	var reqBody = {
+		commuteCompanyName : $('#input_commutes_modal_company_name').val(),
+		checkInTime        : checkInTimeStr,
+		checkOutTime       : checkOutTimeStr,
+		memo               : $('#input_commutes_modal_memo').val()
+	};
+	
+	GHASIX_API.apiAjaxCall('PUT', apiURL, reqHeader, reqBody, null, modifySuccess, ajaxFail);
+}
+
+function modifySuccess(apiResult) {
+	if (!GHASIX_API.checkResultSuccess(apiResult)) {
+		alert(apiResult.resultMsg);
+		return;
+	}
+
+	var id = $('#input_modal_commutes_id').val();
+
+	if (!!commutes_list_ary) {
+		for (var i = 0; i < commutes_list_ary.length; ++i) {
+			if (commutes_list_ary[i].id == id) {
+				commutes_list_ary[i] = GHASIX_API.getResultData(apiResult, 'updatedCommutes');
+				break;
+			}
+		}
+	}
+
+	$('#input_modal_commutes_id').val('');
+	updateList();
+}
+
+// Commutes modal function (delete)
+function deleteCommutesButtonClick() {
+	if (!confirm('정말 삭제할까요?')) {
+		return; // cancel
+	}
+	
+	var id = $('#input_modal_commutes_id').val();
+	var apiURL = GHASIX_API.apiURL.deleteById.format(id);
+	var reqHeader = { userJwt : $.cookie('userJwt') };
+	
+	GHASIX_API.apiAjaxCall('DELETE', apiURL, reqHeader, null, null, deleteSuccess, ajaxFail);
+}
+
+function deleteSuccess(apiResult) {
+	if (!GHASIX_API.checkResultSuccess(apiResult)) {
+		alert(apiResult.resultMsg);
+		return;
+	}
+
+	var id = $('#input_modal_commutes_id').val();
+
+	if (!!commutes_list_ary) {
+		for (var i = 0; i < commutes_list_ary.length; ++i) {
+			if (commutes_list_ary[i].id == id) {
+				commutes_list_ary.splice(i, 1);
+				break;
+			}
+		}
+	}
+
+	$('#input_modal_commutes_id').val('');
+	updateList();
 }

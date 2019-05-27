@@ -96,35 +96,104 @@
 	</div>
 	<!-- Modal -->
 	<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="h5_center_modal_title" aria-hidden="true">
+		<input type="hidden" id="input_modal_commutes_id">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="h5_center_modal_title">Title</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-				</button>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>	
 			<div class="modal-body">
-				<div class="form-group">
-					<label for="recipient-name" class="col-form-label">출근시간:</label>
-					<input type="text" class="form-control" id="input_commutes_modal_company_name">
+				<div class="container-fluid">
+					<div class="row">
+						<label for="recipient-name" class="col-form-label">출근시간:</label>
+						<div class="form-group">
+							<div class="col">
+								<div class="input-group mb-3">
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_in_year">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">년</span>
+									</div>
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_in_month">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">월</span>
+									</div>
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_in_date">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">일</span>
+									</div>
+								</div>
+							</div>
+							<div class="col">
+								<div class="input-group mb-3">
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_in_hour">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">시</span>
+									</div>
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_in_minute">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">분</span>
+									</div>
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_in_second">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">초</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<label for="recipient-name" class="col-form-label">퇴근시간:</label>
+						<div class="form-group">
+							<div class="col">
+								<div class="input-group mb-3">
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_out_year">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">년</span>
+									</div>
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_out_month">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">월</span>
+									</div>
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_out_date">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">일</span>
+									</div>
+								</div>
+							</div>
+							<div class="col">
+								<div class="input-group mb-3">
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_out_hour">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">시</span>
+									</div>
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_out_minute">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">분</span>
+									</div>
+									<input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="modal_input_check_out_second">
+									<div class="input-group-prepend">
+										<span class="input-group-text" id="inputGroup-sizing-default">초</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<label for="recipient-name" class="col-form-label">회사명:</label>
+							<input type="text" class="form-control" id="input_commutes_modal_company_name">
+						</div>
+						<div class="col-12">
+							<label for="message-text" class="col-form-label">메모:</label>
+							<textarea class="form-control" id="input_commutes_modal_memo"></textarea>
+						</div>
+					</div>
 				</div>
-				<div class="form-group">
-					<label for="recipient-name" class="col-form-label">퇴근시간:</label>
-					<input type="text" class="form-control" id="input_commutes_modal_company_name">
-				</div>
-				<div class="form-group">
-					<label for="recipient-name" class="col-form-label">회사명:</label>
-					<input type="text" class="form-control" id="input_commutes_modal_company_name">
-				</div>
-				<div class="form-group">
-					<label for="message-text" class="col-form-label">메모:</label>
-					<textarea class="form-control" id="input_commutes_modal_memo"></textarea>
-				</div>
-      </div>
+      		</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" data-dismiss="modal">삭제</button>
-				<button type="button" class="btn btn-primary" data-dismiss="modal">수정</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteCommutesButtonClick()">삭제</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="modifyCommutesButtonClick()">수정</button>
 			</div>
 			</div>
 		</div>
