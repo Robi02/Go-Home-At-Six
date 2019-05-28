@@ -14,6 +14,7 @@
 	<div class="container-fluid">
 		<!-- What's here? -->
 		<h1>통계 페이지</h1>
+		<h6>준비중입니다...</h6>
 	</div>
 </body>
 </html>

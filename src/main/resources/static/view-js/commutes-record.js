@@ -5,6 +5,13 @@ var commutes_record_timer_on     = false;
 
 // Page initializer
 $(document).ready(function() {
+	// Check user login
+	// ...
+	
+	// Set company and memo
+	$('#input_company_name').val();
+	$('#textarea_memo').val();
+
 	// Get last check-in commutes (has userJwt but, no last check-in commutes)
 	if (!!$.cookie('userJwt') && !$.cookie('lastCheckInCommutes')) {
 		// from server
@@ -58,20 +65,34 @@ $(document).ready(function() {
 		GHASIX_API.apiAjaxCall('PUT', apiURL, reqHeader, reqBody, null, checkOutSuccess, ajaxFail);
 	});
 
-	// Working timer
-	setInterval(function() {
-		if (commutes_record_timer_on == true) {
-			var workingTimeMs = new Date() - new Date(commutes_record_checkInTime);
-			var hours = parseInt(workingTimeMs / 3600000);
-			var mins = parseInt(workingTimeMs / 60000 % 60);
-			var secs = parseInt(workingTimeMs / 1000 % 60);
-			var workingTimeStr = '{0}시간 {1}분 {2}초'.format(hours, mins, secs);
-
-			$('#div_working_time').removeClass('d-none');
-			$('#span_working_time').html(workingTimeStr);
-		}		
-	}, 1000);
+	// Current time and Working timer
+	updateTime();
+	setInterval(updateTime, 1000);
 });
+
+// Update current time
+function updateTime() {
+	// current time
+	var curTime = new Date();
+
+	$('#span_year').html(curTime.format('yyyy'));
+	$('#span_month').html(curTime.format('MM'));
+	$('#span_date').html(curTime.format('dd'));
+	$('#span_day_of_week').html(curTime.format('(E)'));
+	$('#span_cur_time').html(curTime.format('HH시 mm분 ss초'));
+
+	// working timer
+	if (commutes_record_timer_on == true) {
+		var workingTimeMs = (curTime.getTime() - commutes_record_checkInTime);
+		var hours = parseInt(workingTimeMs / 3600000);
+		var mins = parseInt(workingTimeMs / 60000 % 60);
+		var secs = parseInt(workingTimeMs / 1000 % 60);
+		var workingTimeStr = '{0}시간 {1}분 {2}초'.format(hours, mins, secs);
+
+		$('#div_working_time').removeClass('d-none');
+		$('#span_working_time').html(workingTimeStr);
+	}		
+}
 
 // Check-in success
 function checkInSuccess(apiResult) {

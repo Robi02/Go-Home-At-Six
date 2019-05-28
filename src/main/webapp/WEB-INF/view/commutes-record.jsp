@@ -24,7 +24,7 @@
 					<small id="span_day_of_week">(일)</small>
 				</h3>
 				<h5>
-					- <span id="span_cur_time">00시 00분 00초</span>
+					<span id="span_cur_time">00시 00분 00초</span>
 				</h5>
 			</div>
 		</div>
@@ -53,7 +53,7 @@
 		</div>
 		<div class="row justify-content-center align-items-center">
 			<div class="col-11">
-				<textarea class="w-100 h-100" placeholder="메모" id="textarea_memo"></textarea>
+				<textarea class="w-100 h-100" placeholder="특이사항 기입" id="textarea_memo"></textarea>
 			</div>
 		</div>
 		<!-- Records -->

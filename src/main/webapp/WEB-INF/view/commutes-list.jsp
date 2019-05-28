@@ -186,7 +186,7 @@
 						</div>
 						<div class="col-12">
 							<label for="message-text" class="col-form-label">메모:</label>
-							<textarea class="form-control" id="input_commutes_modal_memo"></textarea>
+							<textarea class="form-control" id="input_commutes_modal_memo" placeholder="특이사항 기입"></textarea>
 						</div>
 					</div>
 				</div>

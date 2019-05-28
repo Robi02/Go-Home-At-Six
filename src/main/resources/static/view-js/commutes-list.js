@@ -143,7 +143,7 @@ function listButtonClick(idx) {
 	var id                 = commutes.id;
 	var checkInTime        = commutes.checkInTime;
 	var checkOutTime       = commutes.checkOutTime;
-	var checkInCompanyName = commutes.checkInCompanyName;
+	var commuteCompanyName = commutes.commuteCompanyName;
 	var memo               = commutes.memo;
 
 	$('#input_modal_commutes_id').val(id);
@@ -174,8 +174,7 @@ function listButtonClick(idx) {
 	$('#modal_input_check_out_hour').val(checkOutDate.format('HH'));
 	$('#modal_input_check_out_minute').val(checkOutDate.format('mm'));
 	$('#modal_input_check_out_second').val(checkOutDate.format('ss'));
-
-	$('#input_commutes_modal_company_name').val(checkInCompanyName);
+	$('#input_commutes_modal_company_name').val(commuteCompanyName);
 	$('#input_commutes_modal_memo').val(memo);
 }
 

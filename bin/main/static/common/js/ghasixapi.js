@@ -56,7 +56,7 @@ var GHASIX_API = {
         }
 
         return true;
-		},
+    },
     // Get ResultData From API ResultData
     getResultData : function(apiResult, key) {
         if (!apiResult) {

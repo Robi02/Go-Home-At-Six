@@ -3,7 +3,7 @@
 	<div class="col-5 text-left">
 		<button type="button" class="btn btn-outline-light d-none" id="button_navi_join">New</button>
 		<button type="button" class="btn btn-outline-light d-none" id="button_navi_login">In</button>
-		<button type="button" class="btn btn-outline-light d-none" id="button_navi_logout">Logout</button>
+		<button type="button" class="btn btn-outline-light d-none" id="button_navi_logout">Out</button>
 	</div>
 	<div class="col text-center border-left border-secondary" id="div_navi">
 		<div class="btn-group btn-group-toggle btn-block" data-toggle="buttons" id="div_navi_radio_btn">

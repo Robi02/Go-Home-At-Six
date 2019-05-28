@@ -72,15 +72,19 @@ function updateNaviUI() {
 		$('#button_navi_join').removeClass('d-none');
 		$('#button_navi_login').removeClass('d-none');
 		$('#div_navi').addClass('d-none');
+
 		$('#button_navi_logout').addClass('d-none');
+		$('#button_navi_setting').addClass('d-none');
 		$('#div_commutes_page').addClass('d-none');
 	}
 	else { // logined
 		$('#div_main_page').addClass('d-none');
 		$('#button_navi_join').addClass('d-none');
 		$('#button_navi_login').addClass('d-none');
+
 		$('#div_navi').removeClass('d-none');
 		$('#button_navi_logout').removeClass('d-none');
+		$('#button_navi_setting').removeClass('d-none');
 		$('#div_commutes_page').removeClass('d-none');
 	}
 }
