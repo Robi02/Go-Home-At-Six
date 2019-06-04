@@ -147,7 +147,7 @@ public class CommutesService implements ICommutesService {
             selectedCommutes = (selectedCommutesOp.isPresent() ? selectedCommutesOp.get() : null);
         }
         catch (Exception e) {
-            logger.error("JPA Exception!", e);
+            logger.error("JPA Select Exception!", e);
             return apiResultMgr.make("20101", ApiResult.class); // 출퇴근기록 DB조회중 오류가 발생했습니다.
         }
 
@@ -187,14 +187,29 @@ public class CommutesService implements ICommutesService {
              */
             List<Commutes> selectedCommutesList = commutesRepo.findByOwnUserIdAndCheckOutTime(ownUser, 0L);
 
+            // 퇴근시간이 기입안된 결과가 여러개면, 가장 오래된 결과부터 반환
             if (selectedCommutesList != null && selectedCommutesList.size() > 0) {
-                // 퇴근시간이 기입안된 결과가 여러개면, 가장 오래된 결과부터 반환
                 lastCommutes = selectedCommutesList.get(0);
+            }
+
+            // 조회결과가 없으면 가장 마지막 정상출퇴근 기록을 재조회하여 반환
+            if (lastCommutes == null) {
+                /**
+                 *      SELECT *
+                 *      FROM commutes
+                 *      WHERE own_user_id = {ownUser.id}
+                 *      LIMIT 1
+                 */
+                selectedCommutesList = commutesRepo.findTop1ByOwnUserIdOrderByCheckInTimeDesc(ownUser);
+                
+                if (selectedCommutesList != null && selectedCommutesList.size() > 0) {
+                    lastCommutes = selectedCommutesList.get(0);
+                }
             }
         }
         catch (Exception e) {
-            logger.error("JPA Insert Exception!", e);
-            return apiResultMgr.make("20102", ApiResult.class); // 출퇴근기록 DB추가중 오류가 발생했습니다.
+            logger.error("JPA Select Exception!", e);
+            return apiResultMgr.make("20101", ApiResult.class); // 출퇴근기록 DB조회중 오류가 발생했습니다.
         }
 
         logger.info("Select last commutes SUCCESS! (ownUser:" + ownUser.getEmail() + ")");

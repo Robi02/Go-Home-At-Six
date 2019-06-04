@@ -125,12 +125,12 @@ public class UserJwtManager extends AbsManager {
         {
             // 토큰 발행시간 ('iat'), 토큰 만료시간 ('exp')
             Calendar curCal = Calendar.getInstance();
-            long curTime = curCal.getTimeInMillis();
-            jwtClaims.put("iat", curTime);
+            jwtClaims.put("iat", curCal.getTime());
+
+            Calendar expCal = Calendar.getInstance();
+            expCal.add(Calendar.MINUTE, jwtLifeMin);
             
-            curCal.add(Calendar.MINUTE, jwtLifeMin);
-            long expTime = curCal.getTimeInMillis();
-            jwtClaims.put("exp", expTime);
+            jwtClaims.put("exp", expCal.getTime());
         }
 
         // JWT 생성
