@@ -25,7 +25,7 @@ $(document).ready(function() {
 	$('#button_navi_login').on('click', function(event) {
 		// modal
 		// test
-		mf_userJwt = $.cookie('userJwt', '78SnY6OqbInOmw38sUWa_gsk4lFGnd8BUCqHFrZ_Na1687+EqPvphzBr_eKpksZR0fEjNGpP4no4TOtvmleex2y50COSbJzKchKVPQBP51g4hXh8r4eDna4FkqXyttfQKcjfcYDk5imv5SlWmwomBrrjuuvW5wecGtVfysQI2eNzZTZdHF2gJ3QRNdCuaA5Hu8aeaoBaxSDRkbIU51IQrG9HR_ikVlEMzB3bomcDx8cWwJRXF+Rr7uNRRijvXMWiMg0b1YsGcs8H95kRSz3QvsEuBVx2RS6LHCjcZOkLXZM-');
+		mf_userJwt = $.cookie('userJwt', 'ZWRuWneWf9A54KSicUC6RlaV6o9xFeRTqvmg_xE9w4ztWLTWLI5l79QZse4EpEv+F0FglY20WFQEQYroyU9d8GfY00f8bGXZBUknCs0nb+XRlNk8hdYUakE9jGjVZON8tmiuXXzixf6dILtyJPEI6XtX1lW_62yUjVu5oxt+Ycv1IJu1KfuL102vzjKoqwDEIynoB9wgKsz0u9jPisKn5fdVMp7qCTXiaIYTag8GOpxHIpjaR+SBF0N1NAy9LE61pBqr2Bg4oQZsVAs0EXtr1DIdgWfdi8MqSlzuaIqim6Q-');
 		// test
 		location.reload();
 	});

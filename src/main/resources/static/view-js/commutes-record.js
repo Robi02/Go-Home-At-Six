@@ -7,32 +7,12 @@ var commutes_record_timer_on     = false;
 $(document).ready(function() {
 	// Check user login
 	// ...
-	
-	// Set company and memo
-	$('#input_company_name').val();
-	$('#textarea_memo').val();
 
 	// Get last check-in commutes (has userJwt but, no last check-in commutes)
 	if (!!$.cookie('userJwt') && !$.cookie('lastCheckInCommutes')) {
-		// from server
-		var reqHeader = { userJwt : $.cookie('userJwt') };
-
-		GHASIX_API.apiAjaxCall('GET', GHASIX_API.apiURL.selectLastCheckIn, reqHeader, null, null, function(apiResult) {
-			if (!GHASIX_API.checkResultSuccess(apiResult)) {
-				return;
-			}
-
-			var lastCheckInCommutes = GHASIX_API.getResultData(apiResult, 'lastCommutes');
-
-			if (!lastCheckInCommutes) { // no last commutes data
-				return;
-			}
-
-			$.cookie('lastCheckInCommutes', JSON.stringify(lastCheckInCommutes));
-			updateButtonAndRecordTime();
-		}, ajaxFail);
+		updateLastCommutes();
 	}
-
+	
 	updateButtonAndRecordTime();
 
 	// Attach events
@@ -69,6 +49,26 @@ $(document).ready(function() {
 	updateTime();
 	setInterval(updateTime, 1000);
 });
+
+// Update last commutes
+function updateLastCommutes() {
+	var reqHeader = { userJwt : $.cookie('userJwt') };
+
+	GHASIX_API.apiAjaxCall('GET', GHASIX_API.apiURL.selectLastCheckIn, reqHeader, null, null, function(apiResult) {
+		if (!GHASIX_API.checkResultSuccess(apiResult)) {
+			return;
+		}
+
+		var lastCheckInCommutes = GHASIX_API.getResultData(apiResult, 'lastCommutes');
+
+		if (!lastCheckInCommutes) { // no last commutes data
+			return;
+		}
+
+		$.cookie('lastCheckInCommutes', JSON.stringify(lastCheckInCommutes));
+		updateButtonAndRecordTime();
+	}, ajaxFail);
+}
 
 // Update current time
 function updateTime() {
@@ -135,6 +135,20 @@ function updateButtonAndRecordTime() {
 	var lastCheckInCommutes = $.cookie('lastCheckInCommutes');
 
 	if (!lastCheckInCommutes) {
+		// show check-in btn (lastCheckInCommutes == undefined)
+		commutes_record_timer_on = false;
+		$('#div_check_in').removeClass('d-none');
+		$('#div_check_out').addClass('d-none');
+		return;
+	}
+
+	var lastCheckInCommutesObj = JSON.parse(lastCheckInCommutes);
+
+	// Set company and memo
+	$('#input_company_name').val(lastCheckInCommutesObj.commuteCompanyName);
+	$('#textarea_memo').val(lastCheckInCommutesObj.memo);
+
+	if (lastCheckInCommutesObj.checkOutTime != 0) {
 		// show check-in btn (lastCheckInCommutes == undefined)
 		commutes_record_timer_on = false;
 		$('#div_check_in').removeClass('d-none');
