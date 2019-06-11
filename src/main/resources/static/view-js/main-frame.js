@@ -25,7 +25,7 @@ $(document).ready(function() {
 	$('#button_navi_login').on('click', function(event) {
 		// modal
 		// test
-		mf_userJwt = $.cookie('userJwt', 'ZWRuWneWf9A54KSicUC6RlaV6o9xFeRTqvmg_xE9w4ztWLTWLI5l79QZse4EpEv+F0FglY20WFQEQYroyU9d8GfY00f8bGXZBUknCs0nb+XRlNk8hdYUakE9jGjVZON8tmiuXXzixf6dILtyJPEI6XtX1lW_62yUjVu5oxt+Ycv1IJu1KfuL102vzjKoqwDEIynoB9wgKsz0u9jPisKn5fdVMp7qCTXiaIYTag8GOpxHIpjaR+SBF0N1NAy9LE61pBqr2Bg4oQZsVAs0EXtr1DIdgWfdi8MqSlzuaIqim6Q-');
+		mf_userJwt = $.cookie('userJwt', '3JrIyoEO1rC4CPv5bMBjhkonx+DTHObbNTjEu3aHR6p9VJ0jFrDk7UzoJdQ4_28_t56PuWl+we5I2QyMFKkmWlBKG4PbZp1OvYPRZmSMeWf5AhptywJwqQ0eDNbCL7CplShxDWqe8QVBlexy6_Ki6_gTuMpnq49MKxqd3MVvOVxPnITsLJ1PTG4nXtS6Er4h3ALcbu+BSD+HeBrVfjywhErk9mu8Ny8d3YvEHg5BN42Obs_fYti0o+ejYssXikwS8djbTBV+ET2RGZIt6hubvpqfZJ0nZDxN8Qs4FZUpPA8-');
 		// test
 		location.reload();
 	});
@@ -88,7 +88,7 @@ function updateNaviUI() {
 function setIframeSrc(iframeId, srcUrl) {
 	iframeId = '#' + iframeId;
 	var iframeTag = $(iframeId);
-	if (iframeTag.attr('src') != srcUrl) iframeTag.attr('src', srcUrl);
+	iframeTag.attr('src', srcUrl);
 }
 
 function showIframe(iframeId) {

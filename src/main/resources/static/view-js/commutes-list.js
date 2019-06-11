@@ -220,7 +220,6 @@ function modifySuccess(apiResult) {
 	}
 
 	$.removeCookie('lastCheckInCommutes');
-	updateLastCommutes(); // from commutes-record.js
 
 	var id = $('#input_modal_commutes_id').val();
 
@@ -257,7 +256,6 @@ function deleteSuccess(apiResult) {
 	}
 
 	$.removeCookie('lastCheckInCommutes');
-	updateLastCommutes(); // from commutes-record.js // 해당 스크립트는 iframe 외부에 있는거라 호출이 불가능... 대체방안은? @@
 
 	var id = $('#input_modal_commutes_id').val();
 
