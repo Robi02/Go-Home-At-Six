@@ -49,8 +49,7 @@ public class CommutesRestController {
 
     @GetMapping("/commutes/last") // 마지막 출퇴근 기록 조회
     public ApiResult getCommutesLastCheckIn(
-        @RequestHeader("userJwt") String userJwt
-    ) {
+        @RequestHeader("userJwt") String userJwt) {
         return commutesSvc.selectCommutesLast(userJwt);
     }
 

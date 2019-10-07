@@ -1,18 +1,37 @@
 // Global
 var mf_userJwt           = null;
 var mf_apiDomain         = null;
+var mf_mainPageURL		 = null;
 var mf_recordPageURL     = null;
 var mf_listPageURL       = null;
 var mf_statisticsPageURL = null;
+var mf_loginPageURL		 = null;
 
 // Page initializer
 $(document).ready(function() {
 	// Init Global
 	mf_userJwt           = $.cookie('userJwt');
-	mf_apiDomain         = 'http://localhost:8080';
+	mf_apiDomain         = 'http://localhost:50001';
+	mf_mainPageURL		 = mf_apiDomain + '/main';
 	mf_recordPageURL     = mf_apiDomain + '/record';
 	mf_listPageURL       = mf_apiDomain + '/list';
 	mf_statisticsPageURL = mf_apiDomain + '/statistics';
+	mf_loginPageURL		 = 'http://localhost:50000/main?audience=ghasix&afterIssueParam=' + mf_mainPageURL; // auth-servers
+
+	// Update userJwt
+	if (!mf_userJwt) { // fail to find userJwt from cookie
+		if (!!(mf_userJwt = getUrlParameter('userJwt'))) {
+			// Need login ...
+		}
+		else {
+			if (!!getUrlParameter('keepLoggedIn')) { // 15day
+				$.cookie('userJwt', mf_userJwt, { expires: 15, path: '/' });
+			}
+			else {
+				$.cookie('userJwt', mf_userJwt, { expires: 1, path: '/' }); // 1day
+			}
+		}
+	}
 
 	// Update Navi UI
 	updateNaviUI();
@@ -24,15 +43,12 @@ $(document).ready(function() {
 	});
 	$('#button_navi_login').on('click', function(event) {
 		// modal
-		// test
-		mf_userJwt = $.cookie('userJwt', '3JrIyoEO1rC4CPv5bMBjhkonx+DTHObbNTjEu3aHR6p9VJ0jFrDk7UzoJdQ4_28_t56PuWl+we5I2QyMFKkmWlBKG4PbZp1OvYPRZmSMeWf5AhptywJwqQ0eDNbCL7CplShxDWqe8QVBlexy6_Ki6_gTuMpnq49MKxqd3MVvOVxPnITsLJ1PTG4nXtS6Er4h3ALcbu+BSD+HeBrVfjywhErk9mu8Ny8d3YvEHg5BN42Obs_fYti0o+ejYssXikwS8djbTBV+ET2RGZIt6hubvpqfZJ0nZDxN8Qs4FZUpPA8-');
-		// test
-		location.reload();
+		location.href = mf_loginPageURL;
 	});
 	$('#button_navi_logout').on('click', function(event) {
 		$.removeCookie('userJwt');
 		$.removeCookie('lastCheckInCommutes');
-		location.reload();
+		location.replace(mf_mainPageURL);
 	});
 
 	$('#div_navi_radio_btn .btn').on('click', function(event) {
