@@ -8,11 +8,19 @@ import com.ghasix.datas.enums.UsersStatus;
 import com.ghasix.datas.result.ApiResult;
 import com.ghasix.manager.ApiResultManager;
 import com.robi.util.MapUtil;
+import com.robi.util.RestHttpUtil;
 import com.robi.util.StringUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import lombok.AllArgsConstructor;
 
@@ -28,64 +36,40 @@ public class UsersService implements IUsersService {
 
     // 회원 존재여부, 서비스 접근유효성등 검사
     public ApiResult checkUserStatus(String userJwt) {
-        ApiResult jwtSvcResult = userJwtSvc.getUserDataFromJwt(userJwt);
+        HttpHeaders httpHeader = new HttpHeaders();
+        httpHeader.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
-        if (jwtSvcResult == null) {
-            logger.error("'jwtSvcResult' is null!");
-            return jwtSvcResult;
+        JSONObject postJsonObj = null;
+        
+        try {
+            postJsonObj = new JSONObject();
+            postJsonObj.put("userJwt", userJwt);
+        }
+        catch (JSONException e) {
+            logger.error("Exception!", e);
+            return new ApiResult(null);
         }
 
-        if (jwtSvcResult.checkResultCodeSuccess() == false) {
-            logger.error("'jwtSvcResult's result code is NOT success!");
-            return jwtSvcResult;
+        HttpEntity<String> httpEntity = new HttpEntity<String>(postJsonObj.toString(), httpHeader);
+
+        RestTemplate authsRest = RestHttpUtil.getInstance();
+        ResponseEntity<String> responseStr = authsRest.postForEntity(
+            "http://localhost:50000/users/api/jwt/validate",
+            httpEntity,
+            String.class);
+        
+        JSONObject rpyObj = null;
+        
+        try {
+            rpyObj = new JSONObject(responseStr.getBody());
         }
-
-        String email = (String) jwtSvcResult.getResultData("userId");
-        Users selectedUser = null;
-
-        try { // JPA - Select
-            selectedUser = userRepo.findByEmail(email);
+        catch (JSONException e) {
+            logger.error("Exception!", e);
+            return new ApiResult(null);
         }
-        catch (Exception e) {
-            logger.error("JPA Select Exception!", e);
-            return apiResultMgr.make("10101", ApiResult.class); // 회원 DB조회중 오류가 발생했습니다.
-        }
-
-        if (selectedUser == null) {
-            logger.info("Fail to find user. (email:" + email + ")");
-            return apiResultMgr.make("10001", ApiResult.class); // 회원 정보가 존재하지 않습니다.
-        }
-
-        UsersStatus status = selectedUser.getStatus();
-
-        if (!status.equals(UsersStatus.NORMAL)) {
-            if (status.equals(UsersStatus.SLEEPING)) {
-                logger.info("User found but, status is '" + status.getValue() + "'. (email:" + email + ")");
-                return apiResultMgr.make("10004", ApiResult.class); // 휴면중인 회원입니다.
-            }
-            else if (status.equals(UsersStatus.BLACKLIST)) {
-                logger.info("User found but, status is '" + status.getValue() + "'. (email:" + email + ")");
-                return apiResultMgr.make("10005", ApiResult.class); // 블랙리스트 회원입니다.
-            }
-            else if (status.equals(UsersStatus.DEREGISTERED)) {
-                logger.info("User found but, status is '" + status.getValue() + "'. (email:" + email + ")");
-                return apiResultMgr.make("10006", ApiResult.class); // 탈퇴한 회원입니다.
-            }
-            else {
-                logger.info("User found but, status is 'Undefined'. (email:" + email + ")");
-                return apiResultMgr.make("10003", ApiResult.class); // 회원 상태값이 미정의된 값입니다.
-            }
-        }
-
-        Long accessibleTime = selectedUser.getAccessibleTime();
-
-        if (accessibleTime != null && System.currentTimeMillis() < accessibleTime) {
-            logger.info("User found but, accessibleTime NOT reached. (accessibleTime:" + accessibleTime + ")");
-            return apiResultMgr.make("10002", ApiResult.class); // 아직 사용할 수 없는 계정입니다.
-        }
-
-        logger.info("User found and authorized! (selectedUser:" + selectedUser.toString() + ")");
-        return apiResultMgr.make("00000", MapUtil.toMap("selectedUser", selectedUser), ApiResult.class);
+     
+        logger.info(rpyObj.toString());
+        return new ApiResult(null);
     }
 
     // 회원 추가
