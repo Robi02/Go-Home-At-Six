@@ -1,13 +1,9 @@
 package com.ghasix.service;
 
-import java.util.Map;
-
 import com.ghasix.datas.domain.Users;
 import com.ghasix.datas.domain.UsersRepository;
 import com.ghasix.datas.enums.UsersStatus;
-import com.ghasix.datas.result.ApiResult;
-import com.ghasix.manager.ApiResultManager;
-import com.robi.util.MapUtil;
+import com.robi.data.ApiResult;
 import com.robi.util.RestHttpUtil;
 import com.robi.util.StringUtil;
 
@@ -32,7 +28,6 @@ public class UsersService implements IUsersService {
 
     private UserJwtService userJwtSvc;
     private UsersRepository userRepo;
-    private ApiResultManager apiResultMgr;
 
     // 회원 존재여부, 서비스 접근유효성등 검사
     public ApiResult checkUserStatus(String userJwt) {
@@ -47,7 +42,7 @@ public class UsersService implements IUsersService {
         }
         catch (JSONException e) {
             logger.error("Exception!", e);
-            return new ApiResult(null);
+            return ApiResult.make(false);
         }
 
         HttpEntity<String> httpEntity = new HttpEntity<String>(postJsonObj.toString(), httpHeader);
@@ -57,6 +52,8 @@ public class UsersService implements IUsersService {
             "http://localhost:50000/users/api/jwt/validate",
             httpEntity,
             String.class);
+            // 이거 잘 되긴 하는데... ApiResult 클래스를 다시 설계해놔야 앞으로 작업이 이쁘게 잘 될듯...?
+            // 
         
         JSONObject rpyObj = null;
         
@@ -65,18 +62,18 @@ public class UsersService implements IUsersService {
         }
         catch (JSONException e) {
             logger.error("Exception!", e);
-            return new ApiResult(null);
+            return ApiResult.make(false);
         }
      
         logger.info(rpyObj.toString());
-        return new ApiResult(null);
+        return ApiResult.make(false);
     }
 
     // 회원 추가
     public ApiResult insertUser(String email, String name) {
         if (email == null || name == null) {
             logger.error("'email' or 'name' is null! (email:" + email + ", name:" + name + ")");
-            return apiResultMgr.make("00101", ApiResult.class); // 필수 인자값이 비었습니다.
+            return ApiResult.make(false, "00101"); // 필수 인자값이 비었습니다.
         }
 
         email = email.trim();
@@ -84,12 +81,12 @@ public class UsersService implements IUsersService {
 
         if (StringUtil.isEmail(email) == false) {
             logger.error("'email' is NOT correct! (email:" + email + ")");
-            return apiResultMgr.make("00103", ApiResult.class); // 올바른 이메일 형식이 아닙니다.
+            return ApiResult.make(false, "00103"); // 올바른 이메일 형식이 아닙니다.
         }
 
         if (name.length() == 0) {
             logger.error("'name's length is zero!");
-            return apiResultMgr.make("00105", ApiResult.class); // 이름이 너무 짧습니다.
+            return ApiResult.make(false, "00105"); // 이름이 너무 짧습니다.
         }
 
         Users selectedUser = null;
@@ -99,12 +96,12 @@ public class UsersService implements IUsersService {
         }
         catch (Exception e) {
             logger.error("JPA Select Exception!", e);
-            return apiResultMgr.make("10101", ApiResult.class); // 회원 DB조회중 오류가 발생했습니다.
+            return ApiResult.make(false, "10101"); // 회원 DB조회중 오류가 발생했습니다.
         }
 
         if (selectedUser != null) {
             logger.error("'selectedUser' is NOT null! email duplicated! (email:" + email + ")");
-            return apiResultMgr.make("00104", ApiResult.class); // 사용중인 이메일입니다.
+            return ApiResult.make(false, "00104"); // 사용중인 이메일입니다.
         }
 
         try { // JPA - Insert
@@ -125,10 +122,10 @@ public class UsersService implements IUsersService {
         }
         catch (Exception e) {
             logger.error("JPA Insert Exception!", e);
-            return apiResultMgr.make("10102", ApiResult.class); // 회원 DB추가중 오류가 발생했습니다.
+            return ApiResult.make(false, "10102"); // 회원 DB추가중 오류가 발생했습니다.
         }
 
         logger.info("New users inserted! (email:" + email + ")");
-        return apiResultMgr.make(ApiResult.class);
+        return ApiResult.make(true);
     }
 }

@@ -219,6 +219,8 @@ function modifySuccess(apiResult) {
 		return;
 	}
 
+	$.removeCookie('lastCheckInCommutes');
+
 	var id = $('#input_modal_commutes_id').val();
 
 	if (!!commutes_list_ary) {
@@ -239,7 +241,7 @@ function deleteCommutesButtonClick() {
 	if (!confirm('정말 삭제할까요?')) {
 		return; // cancel
 	}
-	
+
 	var id = $('#input_modal_commutes_id').val();
 	var apiURL = GHASIX_API.apiURL.deleteById.format(id);
 	var reqHeader = { userJwt : $.cookie('userJwt') };
@@ -252,6 +254,8 @@ function deleteSuccess(apiResult) {
 		alert(apiResult.resultMsg);
 		return;
 	}
+
+	$.removeCookie('lastCheckInCommutes');
 
 	var id = $('#input_modal_commutes_id').val();
 

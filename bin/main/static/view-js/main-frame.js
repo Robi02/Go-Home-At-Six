@@ -20,9 +20,8 @@ $(document).ready(function() {
 
 	// Update userJwt
 	if (!mf_userJwt) { // fail to find userJwt from cookie
-		if (!(mf_userJwt = getUrlParameter('userJwt'))) {
+		if (!!(mf_userJwt = getUrlParameter('userJwt'))) {
 			// Need login ...
-			alert('로그인이 필요한 서비스입니다.');
 		}
 		else {
 			if (!!getUrlParameter('keepLoggedIn')) { // 15day
@@ -31,7 +30,6 @@ $(document).ready(function() {
 			else {
 				$.cookie('userJwt', mf_userJwt, { expires: 1, path: '/' }); // 1day
 			}
-			alert($.cookie('userJwt'));
 		}
 	}
 

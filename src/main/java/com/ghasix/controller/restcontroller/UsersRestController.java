@@ -1,13 +1,9 @@
 package com.ghasix.controller.restcontroller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.ghasix.datas.dto.PostUsersDto;
-import com.ghasix.datas.result.ApiResult;
-import com.ghasix.manager.ApiResultManager;
 import com.ghasix.manager.UserJwtManager;
 import com.ghasix.service.UsersService;
+import com.robi.data.ApiResult;
 import com.robi.util.MapUtil;
 
 import org.slf4j.Logger;
@@ -28,12 +24,11 @@ public class UsersRestController {
 
     private UsersService usersSvc;
     private UserJwtManager userJwtMgr;
-    private ApiResultManager apiResultMgr;
 
     @GetMapping("/users/{email}/jwt")
     public ApiResult getUserJwt(@PathVariable("email") String email) {
         // Test
-        return apiResultMgr.make(MapUtil.toMap("userJwt", userJwtMgr.encodeUserJwt(email)), ApiResult.class);
+        return ApiResult.make(true, MapUtil.toMap("userJwt", userJwtMgr.encodeUserJwt(email)));
     }
 
     @PostMapping("/users")

@@ -1,13 +1,12 @@
 package com.ghasix.aop;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
-import com.ghasix.datas.result.ApiResult;
 import com.ghasix.manager.CodeMsgManager;
 import com.ghasix.manager.TidManager;
 import com.ghasix.util.LogUtil;
+
+import com.robi.data.ApiResult;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -61,7 +60,7 @@ public class ControllerAop {
                 try {
                     ApiResult apiResult = null;
 
-                    if (ctrReturn instanceof ApiResult) {
+                    if (ctrReturn instanceof ApiResult) { // 왜 APIresult 클래스를 재설계 했는데도 적용이 안되는거 같지? 여기부터 시작@
                         apiResult = (ApiResult) ctrReturn;
                     }
                     else if (ctrReturn instanceof ResponseEntity<?>) {
@@ -70,7 +69,7 @@ public class ControllerAop {
                     }
 
                     if (apiResult != null) {
-                        apiResult.controllerCompact(tId);
+                        apiResult.setTraceId(tId);
                     }
                 }
                 catch (ClassCastException e) {

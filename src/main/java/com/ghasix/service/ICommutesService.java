@@ -2,7 +2,7 @@ package com.ghasix.service;
 
 import com.ghasix.datas.dto.PostCommutesDto;
 import com.ghasix.datas.dto.PutCommutesDto;
-import com.ghasix.datas.result.ApiResult;
+import com.robi.data.ApiResult;
 
 public interface ICommutesService {
 
