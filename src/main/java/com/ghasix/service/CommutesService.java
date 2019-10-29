@@ -37,7 +37,7 @@ public class CommutesService implements ICommutesService {
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.isSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
@@ -79,7 +79,7 @@ public class CommutesService implements ICommutesService {
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.isSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
@@ -120,7 +120,7 @@ public class CommutesService implements ICommutesService {
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.isSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
@@ -163,7 +163,7 @@ public class CommutesService implements ICommutesService {
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.isSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
@@ -244,7 +244,7 @@ public class CommutesService implements ICommutesService {
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.isSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
@@ -318,7 +318,7 @@ public class CommutesService implements ICommutesService {
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.isSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
@@ -379,7 +379,7 @@ public class CommutesService implements ICommutesService {
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.isSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }

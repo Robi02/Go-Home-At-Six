@@ -60,7 +60,7 @@ public class ControllerAop {
                 try {
                     ApiResult apiResult = null;
 
-                    if (ctrReturn instanceof ApiResult) { // 왜 APIresult 클래스를 재설계 했는데도 적용이 안되는거 같지? 여기부터 시작@
+                    if (ctrReturn instanceof ApiResult) {
                         apiResult = (ApiResult) ctrReturn;
                     }
                     else if (ctrReturn instanceof ResponseEntity<?>) {

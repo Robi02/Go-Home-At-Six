@@ -3,11 +3,21 @@ package com.robi.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@JsonAutoDetect(fieldVisibility     = Visibility.NONE,
+                getterVisibility    = Visibility.NONE,
+                setterVisibility    = Visibility.NONE,
+                isGetterVisibility  = Visibility.NONE)
+@JsonPropertyOrder({"trace_id", "result_code", "result_msg", "result_data"})
 public class ApiResult {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiResult.class);
@@ -22,12 +32,22 @@ public class ApiResult {
     public static final String DEFAULT_API_RESULT_MSG_POSITIVE      = "OK";
     public static final String DEFAULT_API_RESULT_MSG_NEGATIVE      = "FAIL";
 
+    protected boolean result;
+
+    @JsonProperty(KEY_API_TRACE_ID)
     protected String trace_id;
+    
+    @JsonProperty(KEY_API_RESULT_CODE)
     protected String result_code;
+
+    @JsonProperty(KEY_API_RESULT_MSG)
     protected String result_msg;
+
+    @JsonProperty(KEY_API_RESULT_DATA)
     protected Map<String, Object> result_data;
 
     private ApiResult(boolean result, String code, String msg, Map<String, Object> data) {
+        this.result = result;
         this.trace_id = null;
         this.result_code = (code == null ? (result ? DEFAULT_API_RESULT_CODE_POSSITIVE : DEFAULT_API_RESULT_CODE_NEGATIVE) : code);
         this.result_msg = (msg == null ? (result ? DEFAULT_API_RESULT_MSG_POSITIVE : DEFAULT_API_RESULT_MSG_NEGATIVE) : msg);
@@ -54,8 +74,8 @@ public class ApiResult {
         return new ApiResult(result, code, msg, data);
     }
 
-    public boolean isSuccess() {
-        return (!this.result_code.equals(DEFAULT_API_RESULT_CODE_NEGATIVE));
+    public boolean getResult() {
+        return this.result;
     }
 
     public void addData(Map<String, Object> dataMap) {
