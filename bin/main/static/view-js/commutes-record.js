@@ -104,7 +104,7 @@ function checkInSuccess(apiResult) {
 		updateButtonAndRecordTime();
 	}
 	else {
-		alert(apiResult.resultMsg);
+		alert(apiResult.result_msg);
 	}
 }
 
@@ -121,7 +121,7 @@ function checkOutSuccess(apiResult) {
 		$('#div_check_out_time').removeClass('d-none');
 	}
 	else {
-		alert(apiResult.resultMsg);
+		alert(apiResult.result_msg);
 	}
 }
 

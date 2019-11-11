@@ -17,12 +17,13 @@ import org.slf4j.LoggerFactory;
                 getterVisibility    = Visibility.NONE,
                 setterVisibility    = Visibility.NONE,
                 isGetterVisibility  = Visibility.NONE)
-@JsonPropertyOrder({"trace_id", "result_code", "result_msg", "result_data"})
+@JsonPropertyOrder({"trace_id", "result", "result_code", "result_msg", "result_data"})
 public class ApiResult {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiResult.class);
 
     public static final String KEY_API_TRACE_ID     = "trace_id";
+    public static final String KEY_API_RESULT       = "result";
     public static final String KEY_API_RESULT_CODE  = "result_code";
     public static final String KEY_API_RESULT_MSG   = "result_msg";
     public static final String KEY_API_RESULT_DATA  = "result_data";
@@ -32,11 +33,12 @@ public class ApiResult {
     public static final String DEFAULT_API_RESULT_MSG_POSITIVE      = "OK";
     public static final String DEFAULT_API_RESULT_MSG_NEGATIVE      = "FAIL";
 
-    protected boolean result;
-
     @JsonProperty(KEY_API_TRACE_ID)
     protected String trace_id;
-    
+
+    @JsonProperty(KEY_API_RESULT)
+    protected boolean result;
+
     @JsonProperty(KEY_API_RESULT_CODE)
     protected String result_code;
 
@@ -72,6 +74,24 @@ public class ApiResult {
 
     public static ApiResult make(boolean result, String code, String msg, Map<String, Object> data) {
         return new ApiResult(result, code, msg, data);
+    }
+
+    public static ApiResult make(String jsonStr) {
+        return make(new JSONObject(jsonStr));
+    }
+
+    public static ApiResult make(JSONObject jsonObj) {
+        if (jsonObj == null) {
+            return null;
+        }
+
+        boolean result = jsonObj.getBoolean(KEY_API_RESULT);
+        //String resultCode = jsonObj.getString(KEY_API_RESULT_CODE); ghasix <-> auths ApiResult 클래스 통일작업이 필요함...!! #
+        Object resultMsgObj = jsonObj.get(KEY_API_RESULT_MSG);
+        String resultMsg = resultMsgObj == null ? null : resultMsgObj.toString();
+        Map<String, Object> resultMap = (Map<String, Object>) jsonObj.get(KEY_API_RESULT_DATA); // JSONObject 반환하네? 이걸 Map으로 변환해야함... 여기부터 시작! @@
+
+        return ApiResult.make(result, "O", resultMsg, resultMap);
     }
 
     public boolean getResult() {

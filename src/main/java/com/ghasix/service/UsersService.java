@@ -4,6 +4,7 @@ import com.ghasix.datas.domain.Users;
 import com.ghasix.datas.domain.UsersRepository;
 import com.ghasix.datas.enums.UsersStatus;
 import com.robi.data.ApiResult;
+import com.robi.util.MapUtil;
 import com.robi.util.RestHttpUtil;
 import com.robi.util.StringUtil;
 
@@ -45,28 +46,22 @@ public class UsersService implements IUsersService {
             return ApiResult.make(false);
         }
 
-        HttpEntity<String> httpEntity = new HttpEntity<String>(postJsonObj.toString(), httpHeader);
-
-        RestTemplate authsRest = RestHttpUtil.getInstance();
-        ResponseEntity<String> responseStr = authsRest.postForEntity(
-            "http://localhost:50000/users/api/jwt/validate",
-            httpEntity,
-            String.class);
-            // 이거 잘 되긴 하는데... ApiResult 클래스를 다시 설계해놔야 앞으로 작업이 이쁘게 잘 될듯...?
-            // 
-        
+        String responseStr = RestHttpUtil.urlConnection("http://localhost:50000/users/api/jwt/validate",
+                                                        RestHttpUtil.METHOD_POST,
+                                                        MapUtil.toMap("Content-Type", "application/json;charset=utf-8"),
+                                                        MapUtil.toMap("userJwt", userJwt, "audience", "ghasix"));
         JSONObject rpyObj = null;
         
         try {
-            rpyObj = new JSONObject(responseStr.getBody());
+            rpyObj = new JSONObject(responseStr);
         }
         catch (JSONException e) {
             logger.error("Exception!", e);
             return ApiResult.make(false);
         }
-     
+
         logger.info(rpyObj.toString());
-        return ApiResult.make(false);
+        return ApiResult.make(rpyObj);
     }
 
     // 회원 추가

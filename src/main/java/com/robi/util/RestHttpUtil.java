@@ -40,7 +40,7 @@ public class RestHttpUtil {
             .build());
     }
 
-    public static RestTemplate getInstance() {
+    protected static RestTemplate getInstance() {
         return new RestTemplate(httpFactory);
     }
 
@@ -98,21 +98,25 @@ public class RestHttpUtil {
 
         switch (method) {
             case RestHttpUtil.METHOD_GET:
-                restTemplate.getForEntity(url, responseType, uriVariables); // 여기부터 시작... GET과 나머지 메서드들은 어떤걸 사용할까?
-                // 여기 작성 끝나면 인증서버로 붙여보자... @@
+                rpyStr = restTemplate.getForEntity(url, String.class);
                 break;
             case RestHttpUtil.METHOD_POST:
             default:
-                restTemplate.postForEntity(url, httpEntity, String.class);
+                rpyStr = restTemplate.postForEntity(url, httpEntity, String.class);
                 break;
+            /*
+                [Note] put(), delete()는 응답결과를 받아올 수 없는 듯 하다.
+                철저히 REST의 본연의 특징을 살려서 설계된 클래스인듯...
+                추후 메서드 설계 변경해야 함.
             case RestHttpUtil.METHOD_PUT:
-
+                restTemplate.put(url, 업데이트될 객체, paramMap);
                 break;
             case RestHttpUtil.METHOD_DELETE:
-
+                restTemplate.delete(url, reqBodyMap);
                 break;
+            */
         }
 
-        return (rpyStr != null ? rpyStr.toString() : null);
+        return (rpyStr != null ? rpyStr.getBody() : null);
     }
 }

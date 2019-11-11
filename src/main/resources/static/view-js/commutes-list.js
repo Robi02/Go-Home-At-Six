@@ -36,7 +36,7 @@ function searchSuccess(apiResult) {
 		commutes_list_ary = GHASIX_API.getResultData(apiResult, 'selectedCommutesList');
 	}
 	else {
-		alert(JSON.stringify(apiResult.resultMsg));
+		alert(JSON.stringify(apiResult.result_msg));
 	}
 
 	updateList();
@@ -215,7 +215,7 @@ function modifyCommutesButtonClick() {
 
 function modifySuccess(apiResult) {
 	if (!GHASIX_API.checkResultSuccess(apiResult)) {
-		alert(apiResult.resultMsg);
+		alert(apiResult.result_msg);
 		return;
 	}
 
@@ -251,7 +251,7 @@ function deleteCommutesButtonClick() {
 
 function deleteSuccess(apiResult) {
 	if (!GHASIX_API.checkResultSuccess(apiResult)) {
-		alert(apiResult.resultMsg);
+		alert(apiResult.result_msg);
 		return;
 	}
 
