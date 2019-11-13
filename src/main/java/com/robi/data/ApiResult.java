@@ -1,5 +1,6 @@
 package com.robi.data;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,8 +30,8 @@ public class ApiResult {
     public static final String KEY_API_RESULT_MSG   = "result_msg";
     public static final String KEY_API_RESULT_DATA  = "result_data";
     
-    public static final String DEFAULT_API_RESULT_CODE_POSSITIVE    = "O";
-    public static final String DEFAULT_API_RESULT_CODE_NEGATIVE     = "X";
+    public static final String DEFAULT_API_RESULT_CODE_POSSITIVE    = "0000";
+    public static final String DEFAULT_API_RESULT_CODE_NEGATIVE     = "9999";
     public static final String DEFAULT_API_RESULT_MSG_POSITIVE      = "OK";
     public static final String DEFAULT_API_RESULT_MSG_NEGATIVE      = "FAIL";
 
@@ -72,6 +74,10 @@ public class ApiResult {
         return ApiResult.make(result, code, null, data);
     }
 
+    public static ApiResult make(boolean result, String code, String msg) {
+        return new ApiResult(result, code, msg, null);
+    }
+
     public static ApiResult make(boolean result, String code, String msg, Map<String, Object> data) {
         return new ApiResult(result, code, msg, data);
     }
@@ -80,18 +86,27 @@ public class ApiResult {
         return make(new JSONObject(jsonStr));
     }
 
+    @SuppressWarnings("unchecked")
     public static ApiResult make(JSONObject jsonObj) {
         if (jsonObj == null) {
             return null;
         }
 
         boolean result = jsonObj.getBoolean(KEY_API_RESULT);
-        //String resultCode = jsonObj.getString(KEY_API_RESULT_CODE); ghasix <-> auths ApiResult 클래스 통일작업이 필요함...!! #
+        String resultCode = jsonObj.getString(KEY_API_RESULT_CODE);
         Object resultMsgObj = jsonObj.get(KEY_API_RESULT_MSG);
         String resultMsg = resultMsgObj == null ? null : resultMsgObj.toString();
-        Map<String, Object> resultMap = (Map<String, Object>) jsonObj.get(KEY_API_RESULT_DATA); // JSONObject 반환하네? 이걸 Map으로 변환해야함... 여기부터 시작! @@
+        Map<String, Object> resultMap = null;
+        
+        try {
+            resultMap = new ObjectMapper().readValue(jsonObj.get(KEY_API_RESULT_DATA).toString(), Map.class);
+        }
+        catch (IOException e) {
+            logger.error("Exception!", e);
+            return ApiResult.make(false);
+        }
 
-        return ApiResult.make(result, "O", resultMsg, resultMap);
+        return ApiResult.make(result, resultCode, resultMsg, resultMap);
     }
 
     public boolean getResult() {
@@ -151,8 +166,23 @@ public class ApiResult {
         return this.result_data.get(key);
     }
 
+    public String getDataAsStr(String key) {
+        Object data = getData(key);
+        return (data == null ? null : data.toString());
+    }
+
     public void setData(Map<String, Object> dataMap) {
         this.result_data = dataMap;
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> rtMap = new HashMap<String, Object>();
+        rtMap.put(KEY_API_TRACE_ID   , this.trace_id);
+        rtMap.put(KEY_API_RESULT     , this.result);
+        rtMap.put(KEY_API_RESULT_CODE, this.result_code);
+        rtMap.put(KEY_API_RESULT_MSG , this.result_msg);
+        rtMap.put(KEY_API_RESULT_DATA, this.result_data);
+        return rtMap;
     }
 
     @Override

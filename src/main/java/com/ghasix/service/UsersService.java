@@ -1,5 +1,7 @@
 package com.ghasix.service;
 
+import java.util.Map;
+
 import com.ghasix.datas.domain.Users;
 import com.ghasix.datas.domain.UsersRepository;
 import com.ghasix.datas.enums.UsersStatus;
@@ -51,17 +53,49 @@ public class UsersService implements IUsersService {
                                                         MapUtil.toMap("Content-Type", "application/json;charset=utf-8"),
                                                         MapUtil.toMap("userJwt", userJwt, "audience", "ghasix"));
         JSONObject rpyObj = null;
+        ApiResult rpyApiRst = null;
         
         try {
             rpyObj = new JSONObject(responseStr);
+            rpyApiRst = ApiResult.make(rpyObj);
         }
         catch (JSONException e) {
             logger.error("Exception!", e);
-            return ApiResult.make(false);
+            return ApiResult.make(false, "10000"); // 회원관련 오류가 발생했습니다.
         }
 
-        logger.info(rpyObj.toString());
-        return ApiResult.make(rpyObj);
+        if (!rpyApiRst.getResult()) {
+            return rpyApiRst;
+        }
+
+        boolean isUserSelected = true;
+        String email = rpyApiRst.getDataAsStr("email");
+        Users selectedUser = null;
+
+        try { // JPA - Select
+            selectedUser = userRepo.findByEmail(email);
+
+            if (selectedUser == null) {
+                isUserSelected = false;
+            }
+        }
+        catch (Exception e) {
+            logger.error("JPA Insert Exception!", e);
+            return ApiResult.make(false, "10102"); // 회원 DB조회중 오류가 발생했습니다.
+        }
+
+        if (!isUserSelected) { // ghasix 신규회원의 경우 추가
+            String fullName = rpyApiRst.getDataAsStr("fullName");
+            ApiResult insertRst = insertUser(email, fullName);
+
+            if (!insertRst.getResult()) {
+                return insertRst;
+            }
+
+            selectedUser = (Users) insertRst.getData("insertedUser");
+        }
+
+        return ApiResult.make(true, MapUtil.toMap("selectedUser", selectedUser));
     }
 
     // 회원 추가
@@ -99,16 +133,18 @@ public class UsersService implements IUsersService {
             return ApiResult.make(false, "00104"); // 사용중인 이메일입니다.
         }
 
+        Users insertedUser = null;
+
         try { // JPA - Insert
             long curTime = System.currentTimeMillis();
-            Users insertedUser = Users.builder().email(email)
-                                                .name(name)
-                                                .accessLevel(1)
-                                                .status(UsersStatus.NORMAL)
-                                                .joinTime(curTime)
-                                                .lastLoginTime(0L)
-                                                .accessibleTime(curTime)
-                                                .build();
+            insertedUser = Users.builder().email(email)
+                                          .name(name)
+                                          .accessLevel(1)
+                                          .status(UsersStatus.NORMAL)
+                                          .joinTime(curTime)
+                                          .lastLoginTime(0L)
+                                          .accessibleTime(curTime)
+                                          .build();
 
             if (userRepo.save(insertedUser) == null) {
                 logger.error("'.save()' returns null!");
@@ -120,7 +156,7 @@ public class UsersService implements IUsersService {
             return ApiResult.make(false, "10102"); // 회원 DB추가중 오류가 발생했습니다.
         }
 
-        logger.info("New users inserted! (email:" + email + ")");
-        return ApiResult.make(true);
+        logger.info("New users inserted! (insertedUser:" + insertedUser.toString() + ")");
+        return ApiResult.make(true, MapUtil.toMap("insertedUser", insertedUser));
     }
 }
