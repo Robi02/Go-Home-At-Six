@@ -21,7 +21,7 @@ $(document).ready(function() {
 	// Update userJwt
 	if (!mf_userJwt) { // fail to find userJwt from cookie
 		if (!(mf_userJwt = getUrlParameter('userJwt'))) { // there is no userJwt, need login ...
-			alert('로그인이 필요한 서비스입니다.');
+			// ...
 		}
 		else {
 			if (!!getUrlParameter('keepLoggedIn')) { // 15day
