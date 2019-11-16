@@ -2,7 +2,7 @@ package com.ghasix.controller.restcontroller;
 
 import com.ghasix.datas.dto.PostCommutesDto;
 import com.ghasix.datas.dto.PutCommutesDto;
-import com.ghasix.datas.result.ApiResult;
+import com.robi.data.ApiResult;
 import com.ghasix.service.CommutesService;
 
 import org.slf4j.Logger;

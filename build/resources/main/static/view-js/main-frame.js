@@ -1,18 +1,37 @@
 // Global
 var mf_userJwt           = null;
 var mf_apiDomain         = null;
+var mf_mainPageURL		 = null;
 var mf_recordPageURL     = null;
 var mf_listPageURL       = null;
 var mf_statisticsPageURL = null;
+var mf_loginPageURL		 = null;
 
 // Page initializer
 $(document).ready(function() {
 	// Init Global
 	mf_userJwt           = $.cookie('userJwt');
-	mf_apiDomain         = 'http://localhost:8080';
+	mf_apiDomain         = 'http://localhost:50001';
+	mf_mainPageURL		 = mf_apiDomain + '/main';
 	mf_recordPageURL     = mf_apiDomain + '/record';
 	mf_listPageURL       = mf_apiDomain + '/list';
 	mf_statisticsPageURL = mf_apiDomain + '/statistics';
+	mf_loginPageURL		 = 'http://localhost:50000/main?audience=ghasix&afterIssueParam=' + mf_mainPageURL; // auth-servers
+
+	// Update userJwt
+	if (!mf_userJwt) { // fail to find userJwt from cookie
+		if (!!(mf_userJwt = getUrlParameter('userJwt'))) {
+			// Need login ...
+		}
+		else {
+			if (!!getUrlParameter('keepLoggedIn')) { // 15day
+				$.cookie('userJwt', mf_userJwt, { expires: 15, path: '/' });
+			}
+			else {
+				$.cookie('userJwt', mf_userJwt, { expires: 1, path: '/' }); // 1day
+			}
+		}
+	}
 
 	// Update Navi UI
 	updateNaviUI();
@@ -24,15 +43,12 @@ $(document).ready(function() {
 	});
 	$('#button_navi_login').on('click', function(event) {
 		// modal
-		// test
-		mf_userJwt = $.cookie('userJwt', '78SnY6OqbInOmw38sUWa_gsk4lFGnd8BUCqHFrZ_Na1687+EqPvphzBr_eKpksZR0fEjNGpP4no4TOtvmleex2y50COSbJzKchKVPQBP51g4hXh8r4eDna4FkqXyttfQKcjfcYDk5imv5SlWmwomBrrjuuvW5wecGtVfysQI2eNzZTZdHF2gJ3QRNdCuaA5Hu8aeaoBaxSDRkbIU51IQrG9HR_ikVlEMzB3bomcDx8cWwJRXF+Rr7uNRRijvXMWiMg0b1YsGcs8H95kRSz3QvsEuBVx2RS6LHCjcZOkLXZM-');
-		// test
-		location.reload();
+		location.href = mf_loginPageURL;
 	});
 	$('#button_navi_logout').on('click', function(event) {
 		$.removeCookie('userJwt');
 		$.removeCookie('lastCheckInCommutes');
-		location.reload();
+		location.replace(mf_mainPageURL);
 	});
 
 	$('#div_navi_radio_btn .btn').on('click', function(event) {
@@ -88,7 +104,7 @@ function updateNaviUI() {
 function setIframeSrc(iframeId, srcUrl) {
 	iframeId = '#' + iframeId;
 	var iframeTag = $(iframeId);
-	if (iframeTag.attr('src') != srcUrl) iframeTag.attr('src', srcUrl);
+	iframeTag.attr('src', srcUrl);
 }
 
 function showIframe(iframeId) {

@@ -5,14 +5,21 @@ import java.util.Map;
 import com.ghasix.datas.domain.Users;
 import com.ghasix.datas.domain.UsersRepository;
 import com.ghasix.datas.enums.UsersStatus;
-import com.ghasix.datas.result.ApiResult;
-import com.ghasix.manager.ApiResultManager;
+import com.robi.data.ApiResult;
 import com.robi.util.MapUtil;
+import com.robi.util.RestHttpUtil;
 import com.robi.util.StringUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import lombok.AllArgsConstructor;
 
@@ -24,75 +31,78 @@ public class UsersService implements IUsersService {
 
     private UserJwtService userJwtSvc;
     private UsersRepository userRepo;
-    private ApiResultManager apiResultMgr;
 
     // 회원 존재여부, 서비스 접근유효성등 검사
     public ApiResult checkUserStatus(String userJwt) {
-        ApiResult jwtSvcResult = userJwtSvc.getUserDataFromJwt(userJwt);
+        HttpHeaders httpHeader = new HttpHeaders();
+        httpHeader.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
-        if (jwtSvcResult == null) {
-            logger.error("'jwtSvcResult' is null!");
-            return jwtSvcResult;
+        JSONObject postJsonObj = null;
+        
+        try {
+            postJsonObj = new JSONObject();
+            postJsonObj.put("userJwt", userJwt);
+        }
+        catch (JSONException e) {
+            logger.error("Exception!", e);
+            return ApiResult.make(false);
         }
 
-        if (jwtSvcResult.checkResultCodeSuccess() == false) {
-            logger.error("'jwtSvcResult's result code is NOT success!");
-            return jwtSvcResult;
+        String responseStr = RestHttpUtil.urlConnection("http://localhost:50000/users/api/jwt/validate",
+                                                        RestHttpUtil.METHOD_POST,
+                                                        MapUtil.toMap("Content-Type", "application/json;charset=utf-8"),
+                                                        MapUtil.toMap("userJwt", userJwt, "audience", "ghasix"));
+        JSONObject rpyObj = null;
+        ApiResult rpyApiRst = null;
+        
+        try {
+            rpyObj = new JSONObject(responseStr);
+            rpyApiRst = ApiResult.make(rpyObj);
+        }
+        catch (JSONException e) {
+            logger.error("Exception!", e);
+            return ApiResult.make(false, "10000"); // 회원관련 오류가 발생했습니다.
         }
 
-        String email = (String) jwtSvcResult.getResultData("userId");
+        if (!rpyApiRst.getResult()) {
+            return rpyApiRst;
+        }
+
+        boolean isUserSelected = true;
+        String email = rpyApiRst.getDataAsStr("email");
         Users selectedUser = null;
 
         try { // JPA - Select
             selectedUser = userRepo.findByEmail(email);
+
+            if (selectedUser == null) {
+                isUserSelected = false;
+            }
         }
         catch (Exception e) {
-            logger.error("JPA Select Exception!", e);
-            return apiResultMgr.make("10101", ApiResult.class); // 회원 DB조회중 오류가 발생했습니다.
+            logger.error("JPA Insert Exception!", e);
+            return ApiResult.make(false, "10102"); // 회원 DB조회중 오류가 발생했습니다.
         }
 
-        if (selectedUser == null) {
-            logger.info("Fail to find user. (email:" + email + ")");
-            return apiResultMgr.make("10001", ApiResult.class); // 회원 정보가 존재하지 않습니다.
+        if (!isUserSelected) { // ghasix 신규회원의 경우 추가
+            String fullName = rpyApiRst.getDataAsStr("fullName");
+            ApiResult insertRst = insertUser(email, fullName);
+
+            if (!insertRst.getResult()) {
+                return insertRst;
+            }
+
+            selectedUser = (Users) insertRst.getData("insertedUser");
         }
 
-        UsersStatus status = selectedUser.getStatus();
-
-        if (!status.equals(UsersStatus.NORMAL)) {
-            if (status.equals(UsersStatus.SLEEPING)) {
-                logger.info("User found but, status is '" + status.getValue() + "'. (email:" + email + ")");
-                return apiResultMgr.make("10004", ApiResult.class); // 휴면중인 회원입니다.
-            }
-            else if (status.equals(UsersStatus.BLACKLIST)) {
-                logger.info("User found but, status is '" + status.getValue() + "'. (email:" + email + ")");
-                return apiResultMgr.make("10005", ApiResult.class); // 블랙리스트 회원입니다.
-            }
-            else if (status.equals(UsersStatus.DEREGISTERED)) {
-                logger.info("User found but, status is '" + status.getValue() + "'. (email:" + email + ")");
-                return apiResultMgr.make("10006", ApiResult.class); // 탈퇴한 회원입니다.
-            }
-            else {
-                logger.info("User found but, status is 'Undefined'. (email:" + email + ")");
-                return apiResultMgr.make("10003", ApiResult.class); // 회원 상태값이 미정의된 값입니다.
-            }
-        }
-
-        Long accessibleTime = selectedUser.getAccessibleTime();
-
-        if (accessibleTime != null && System.currentTimeMillis() < accessibleTime) {
-            logger.info("User found but, accessibleTime NOT reached. (accessibleTime:" + accessibleTime + ")");
-            return apiResultMgr.make("10002", ApiResult.class); // 아직 사용할 수 없는 계정입니다.
-        }
-
-        logger.info("User found and authorized! (selectedUser:" + selectedUser.toString() + ")");
-        return apiResultMgr.make("00000", MapUtil.toMap("selectedUser", selectedUser), ApiResult.class);
+        return ApiResult.make(true, MapUtil.toMap("selectedUser", selectedUser));
     }
 
     // 회원 추가
     public ApiResult insertUser(String email, String name) {
         if (email == null || name == null) {
             logger.error("'email' or 'name' is null! (email:" + email + ", name:" + name + ")");
-            return apiResultMgr.make("00101", ApiResult.class); // 필수 인자값이 비었습니다.
+            return ApiResult.make(false, "00101"); // 필수 인자값이 비었습니다.
         }
 
         email = email.trim();
@@ -100,12 +110,12 @@ public class UsersService implements IUsersService {
 
         if (StringUtil.isEmail(email) == false) {
             logger.error("'email' is NOT correct! (email:" + email + ")");
-            return apiResultMgr.make("00103", ApiResult.class); // 올바른 이메일 형식이 아닙니다.
+            return ApiResult.make(false, "00103"); // 올바른 이메일 형식이 아닙니다.
         }
 
         if (name.length() == 0) {
             logger.error("'name's length is zero!");
-            return apiResultMgr.make("00105", ApiResult.class); // 이름이 너무 짧습니다.
+            return ApiResult.make(false, "00105"); // 이름이 너무 짧습니다.
         }
 
         Users selectedUser = null;
@@ -115,24 +125,26 @@ public class UsersService implements IUsersService {
         }
         catch (Exception e) {
             logger.error("JPA Select Exception!", e);
-            return apiResultMgr.make("10101", ApiResult.class); // 회원 DB조회중 오류가 발생했습니다.
+            return ApiResult.make(false, "10101"); // 회원 DB조회중 오류가 발생했습니다.
         }
 
         if (selectedUser != null) {
             logger.error("'selectedUser' is NOT null! email duplicated! (email:" + email + ")");
-            return apiResultMgr.make("00104", ApiResult.class); // 사용중인 이메일입니다.
+            return ApiResult.make(false, "00104"); // 사용중인 이메일입니다.
         }
+
+        Users insertedUser = null;
 
         try { // JPA - Insert
             long curTime = System.currentTimeMillis();
-            Users insertedUser = Users.builder().email(email)
-                                                .name(name)
-                                                .accessLevel(1)
-                                                .status(UsersStatus.NORMAL)
-                                                .joinTime(curTime)
-                                                .lastLoginTime(0L)
-                                                .accessibleTime(curTime)
-                                                .build();
+            insertedUser = Users.builder().email(email)
+                                          .name(name)
+                                          .accessLevel(1)
+                                          .status(UsersStatus.NORMAL)
+                                          .joinTime(curTime)
+                                          .lastLoginTime(0L)
+                                          .accessibleTime(curTime)
+                                          .build();
 
             if (userRepo.save(insertedUser) == null) {
                 logger.error("'.save()' returns null!");
@@ -141,10 +153,10 @@ public class UsersService implements IUsersService {
         }
         catch (Exception e) {
             logger.error("JPA Insert Exception!", e);
-            return apiResultMgr.make("10102", ApiResult.class); // 회원 DB추가중 오류가 발생했습니다.
+            return ApiResult.make(false, "10102"); // 회원 DB추가중 오류가 발생했습니다.
         }
 
-        logger.info("New users inserted! (email:" + email + ")");
-        return apiResultMgr.make(ApiResult.class);
+        logger.info("New users inserted! (insertedUser:" + insertedUser.toString() + ")");
+        return ApiResult.make(true, MapUtil.toMap("insertedUser", insertedUser));
     }
 }

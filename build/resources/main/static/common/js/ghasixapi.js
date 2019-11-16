@@ -44,14 +44,14 @@ var GHASIX_API = {
             return false;
         });
     },
-    // API ResultCode Check
+    // API result_code Check
     checkResultSuccess : function(apiResult) {
         if (!apiResult) {
             console.log("Parameter 'apiResult' error! (apiResult:" + apiResult + ")");
             return false;
         }
 
-        if (apiResult.resultCode != '00000') {
+        if (apiResult.result_code != '00000') {
             return false;
         }
 
@@ -69,7 +69,7 @@ var GHASIX_API = {
             return null;
         }
 
-        var resultData = apiResult.resultDatas;
+        var resultData = apiResult.result_data;
 
         if (!resultData) {
             console.log("Parameter 'resultData' error! (resultData:" + resultData + ")");

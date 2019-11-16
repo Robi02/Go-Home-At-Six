@@ -20,15 +20,15 @@ $(document).ready(function() {
 
 	// Update userJwt
 	if (!mf_userJwt) { // fail to find userJwt from cookie
-		if (!!(mf_userJwt = getUrlParameter('userJwt'))) {
-			// Need login ...
+		if (!(mf_userJwt = getUrlParameter('userJwt'))) { // there is no userJwt, need login ...
+			// ...
 		}
 		else {
 			if (!!getUrlParameter('keepLoggedIn')) { // 15day
-				$.cookie('userJwt', mf_userJwt, { expires: 15, path: '/' });
+				$.cookie('userJwt', mf_userJwt, { expires: 15 });
 			}
 			else {
-				$.cookie('userJwt', mf_userJwt, { expires: 1, path: '/' }); // 1day
+				$.cookie('userJwt', mf_userJwt, { expires: 1 }); // 1day
 			}
 		}
 	}

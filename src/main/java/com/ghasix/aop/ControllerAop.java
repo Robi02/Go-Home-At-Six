@@ -1,13 +1,12 @@
 package com.ghasix.aop;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
-import com.ghasix.datas.result.ApiResult;
 import com.ghasix.manager.CodeMsgManager;
 import com.ghasix.manager.TidManager;
 import com.ghasix.util.LogUtil;
+
+import com.robi.data.ApiResult;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -70,7 +69,7 @@ public class ControllerAop {
                     }
 
                     if (apiResult != null) {
-                        apiResult.controllerCompact(tId);
+                        apiResult.setTraceId(tId);
                     }
                 }
                 catch (ClassCastException e) {

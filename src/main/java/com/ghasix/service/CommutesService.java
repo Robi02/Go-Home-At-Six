@@ -8,8 +8,8 @@ import com.ghasix.datas.domain.CommutesRepository;
 import com.ghasix.datas.domain.Users;
 import com.ghasix.datas.dto.PostCommutesDto;
 import com.ghasix.datas.dto.PutCommutesDto;
-import com.ghasix.datas.result.ApiResult;
-import com.ghasix.manager.ApiResultManager;
+import com.robi.data.ApiResult;
+
 import com.robi.util.MapUtil;
 
 import org.slf4j.Logger;
@@ -27,27 +27,26 @@ public class CommutesService implements ICommutesService {
 
     private UsersService usersSvc;
     private CommutesRepository commutesRepo;
-    private ApiResultManager apiResultMgr;
 
     @Override
     public ApiResult selectCommutesAll(String userJwt) {
         if (userJwt == null) {
             logger.error("'userJwt' is null!");
-            return apiResultMgr.make("00202", ApiResult.class); // 회원토큰 값이 비었습니다.
+            return ApiResult.make(false, "00202"); // 회원토큰 값이 비었습니다.
         }
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.checkResultCodeSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
 
-        Users ownUser = (Users) checkUserSvcResult.getResultData("selectedUser");
+        Users ownUser = (Users) checkUserSvcResult.getData("selectedUser");
         
         if (ownUser == null) {
             logger.error("'ownUser' is null!");
-            return apiResultMgr.make("00102", ApiResult.class); // 서버에서 값 획득에 실패했습니다.
+            return ApiResult.make(false, "00102"); // 서버에서 값 획득에 실패했습니다.
         }
 
         // JPA - Select
@@ -64,32 +63,32 @@ public class CommutesService implements ICommutesService {
         }
         catch (Exception e) {
             logger.error("JPA Exception!", e);
-            return apiResultMgr.make("20101", ApiResult.class); // 출퇴근기록 DB조회중 오류가 발생했습니다.
+            return ApiResult.make(false, "20101"); // 출퇴근기록 DB조회중 오류가 발생했습니다.
         }
 
         logger.info("Select commutes SUCCESS! (email:" + ownUser.getEmail() + ")");
-        return apiResultMgr.make(MapUtil.toMap("selectedCommutesList", selectedCommutesList), ApiResult.class);
+        return ApiResult.make(false, MapUtil.toMap("selectedCommutesList", selectedCommutesList));
     }
 
     @Override
     public ApiResult selectCommutesByTime(String userJwt, long beginTime, long endTime) {
         if (userJwt == null) {
             logger.error("'userJwt' is null!");
-            return apiResultMgr.make("00202", ApiResult.class); // 회원토큰 값이 비었습니다.
+            return ApiResult.make(false, "00202"); // 회원토큰 값이 비었습니다.
         }
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.checkResultCodeSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
 
-        Users ownUser = (Users) checkUserSvcResult.getResultData("selectedUser");
+        Users ownUser = (Users) checkUserSvcResult.getData("selectedUser");
         
         if (ownUser == null) {
             logger.error("'ownUser' is null!");
-            return apiResultMgr.make("00102", ApiResult.class); // 서버에서 값 획득에 실패했습니다.
+            return ApiResult.make(false, "00102"); // 서버에서 값 획득에 실패했습니다.
         }
 
         // JPA - Select
@@ -105,32 +104,32 @@ public class CommutesService implements ICommutesService {
         }
         catch (Exception e) {
             logger.error("JPA Exception!", e);
-            return apiResultMgr.make("20101", ApiResult.class); // 출퇴근기록 DB조회중 오류가 발생했습니다.
+            return ApiResult.make(false, "20101"); // 출퇴근기록 DB조회중 오류가 발생했습니다.
         }
 
         logger.info("Select commutes SUCCESS! (email:" + ownUser.getEmail() + ", time:" + beginTime + "-" + endTime + ")");
-        return apiResultMgr.make(MapUtil.toMap("selectedCommutesList", selectedCommutesList), ApiResult.class);
+        return ApiResult.make(true, MapUtil.toMap("selectedCommutesList", selectedCommutesList));
     }
 
     @Override
     public ApiResult selectCommutesById(String userJwt, long commutesId) {
         if (userJwt == null) {
             logger.error("'userJwt' is null!");
-            return apiResultMgr.make("00202", ApiResult.class); // 회원토큰 값이 비었습니다.
+            return ApiResult.make(false, "00202"); // 회원토큰 값이 비었습니다.
         }
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.checkResultCodeSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
 
-        Users ownUser = (Users) checkUserSvcResult.getResultData("selectedUser");
+        Users ownUser = (Users) checkUserSvcResult.getData("selectedUser");
         
         if (ownUser == null) {
             logger.error("'ownUser' is null!");
-            return apiResultMgr.make("00102", ApiResult.class); // 서버에서 값 획득에 실패했습니다.
+            return ApiResult.make(false, "00102"); // 서버에서 값 획득에 실패했습니다.
         }
 
         // JPA - Select
@@ -148,32 +147,32 @@ public class CommutesService implements ICommutesService {
         }
         catch (Exception e) {
             logger.error("JPA Select Exception!", e);
-            return apiResultMgr.make("20101", ApiResult.class); // 출퇴근기록 DB조회중 오류가 발생했습니다.
+            return ApiResult.make(false, "20101"); // 출퇴근기록 DB조회중 오류가 발생했습니다.
         }
 
         logger.info("Select commutes SUCCESS! (ownUser:" + ownUser.getEmail() + ", commutesId:" + commutesId + ")");
-        return apiResultMgr.make(MapUtil.toMap("selectedCommutes", selectedCommutes), ApiResult.class);
+        return ApiResult.make(true, MapUtil.toMap("selectedCommutes", selectedCommutes));
     }
 
     @Override
     public ApiResult selectCommutesLast(String userJwt) {
         if (userJwt == null) {
             logger.error("'userJwt' is null!");
-            return apiResultMgr.make("00202", ApiResult.class); // 회원토큰 값이 비었습니다.
+            return ApiResult.make(false, "00202"); // 회원토큰 값이 비었습니다.
         }
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.checkResultCodeSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
 
-        Users ownUser = (Users) checkUserSvcResult.getResultData("selectedUser");
+        Users ownUser = (Users) checkUserSvcResult.getData("selectedUser");
         
         if (ownUser == null) {
             logger.error("'ownUser' is null!");
-            return apiResultMgr.make("00102", ApiResult.class); // 서버에서 값 획득에 실패했습니다.
+            return ApiResult.make(false, "00102"); // 서버에서 값 획득에 실패했습니다.
         }
 
         Commutes lastCommutes = null;
@@ -209,23 +208,23 @@ public class CommutesService implements ICommutesService {
         }
         catch (Exception e) {
             logger.error("JPA Select Exception!", e);
-            return apiResultMgr.make("20101", ApiResult.class); // 출퇴근기록 DB조회중 오류가 발생했습니다.
+            return ApiResult.make(false, "20101"); // 출퇴근기록 DB조회중 오류가 발생했습니다.
         }
 
         logger.info("Select last commutes SUCCESS! (ownUser:" + ownUser.getEmail() + ")");
-        return apiResultMgr.make(MapUtil.toMap("lastCommutes", lastCommutes), ApiResult.class);
+        return ApiResult.make(true, MapUtil.toMap("lastCommutes", lastCommutes));
     }
 
     @Override
     public ApiResult insertCommutes(String userJwt, PostCommutesDto postCommutesDto) {
         if (userJwt == null) {
             logger.error("'userJwt' is null!");
-            return apiResultMgr.make("00202", ApiResult.class); // 회원토큰 값이 비었습니다.
+            return ApiResult.make(false, "00202"); // 회원토큰 값이 비었습니다.
         }
 
         if (postCommutesDto == null) {
             logger.error("'postCommutesDto' is null!");
-            return apiResultMgr.make("00107", ApiResult.class); // 필수 인자값이 비었습니다.
+            return ApiResult.make(false, "00107"); // 필수 인자값이 비었습니다.
         }
 
         final String commuteCompanyName = postCommutesDto.getCommuteCompanyName();
@@ -235,26 +234,26 @@ public class CommutesService implements ICommutesService {
 
         if (commuteCompanyName == null || commuteCompanyName.length() == 0) {
             logger.error("'commuteCompanyName' is null or zero-length! (commuteCompanyName:" + commuteCompanyName + ")");
-            return apiResultMgr.make("00106", ApiResult.class); // 올바르지않은 값을 전달받았습니다.
+            return ApiResult.make(false, "00106"); // 올바르지않은 값을 전달받았습니다.
         }
 
         if (checkInTime < -1 || checkOutTime < -1) {
             logger.error("'checkInTime' or 'checkOutTime' less than -1! (checkInTime:" + checkInTime + ", checkOutTime:" + checkOutTime + ")");
-            return apiResultMgr.make("00106", ApiResult.class); // 올바르지않은 값을 전달받았습니다.
+            return ApiResult.make(false, "00106"); // 올바르지않은 값을 전달받았습니다.
         }
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.checkResultCodeSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
 
-        Users ownUser = (Users) checkUserSvcResult.getResultData("selectedUser");
+        Users ownUser = (Users) checkUserSvcResult.getData("selectedUser");
         
         if (ownUser == null) {
             logger.error("'ownUser' is null!");
-            return apiResultMgr.make("00102", ApiResult.class); // 서버에서 값 획득에 실패했습니다.
+            return ApiResult.make(false, "00102"); // 서버에서 값 획득에 실패했습니다.
         }
 
         // JPA - Insert
@@ -278,23 +277,23 @@ public class CommutesService implements ICommutesService {
         }
         catch (Exception e) {
             logger.error("JPA Insert Exception!", e);
-            return apiResultMgr.make("20102", ApiResult.class); // 출퇴근기록 DB추가중 오류가 발생했습니다.
+            return ApiResult.make(false, "20102"); // 출퇴근기록 DB추가중 오류가 발생했습니다.
         }
 
         logger.info("Insert new commutes SUCCESS! (ownUser:" + ownUser.getEmail() + ")");
-        return apiResultMgr.make(MapUtil.toMap("insertedCommutes", insertedCommutes), ApiResult.class);
+        return ApiResult.make(true, MapUtil.toMap("insertedCommutes", insertedCommutes));
     }
 
     @Override
     public ApiResult updateCommutes(String userJwt, long commutesId, PutCommutesDto putCommutesDto) {
         if (userJwt == null) {
             logger.error("'userJwt' is null!");
-            return apiResultMgr.make("00202", ApiResult.class); // 회원토큰 값이 비었습니다.
+            return ApiResult.make(false, "00202"); // 회원토큰 값이 비었습니다.
         }
 
         if (putCommutesDto == null) {
             logger.error("'putCommutesDto' is null!");
-            return apiResultMgr.make("00107", ApiResult.class); // 필수 인자값이 비었습니다.
+            return ApiResult.make(false, "00107"); // 필수 인자값이 비었습니다.
         }
 
         final String commuteCompanyName = putCommutesDto.getCommuteCompanyName();
@@ -304,38 +303,38 @@ public class CommutesService implements ICommutesService {
 
         if (commutesId < 0) {
             logger.error("'commutesId' less than zero! (commutesId:" + commutesId + ")");
-            return apiResultMgr.make("00106", ApiResult.class); // 올바르지않은 값을 전달받았습니다.
+            return ApiResult.make(false, "00106"); // 올바르지않은 값을 전달받았습니다.
         }
 
         if (commuteCompanyName == null || commuteCompanyName.length() == 0) {
             logger.error("'commuteCompanyName' is null or zero-length! (commuteCompanyName:" + commuteCompanyName + ")");
-            return apiResultMgr.make("00106", ApiResult.class); // 올바르지않은 값을 전달받았습니다.
+            return ApiResult.make(false, "00106"); // 올바르지않은 값을 전달받았습니다.
         }
 
         if (checkInTime < -1 || checkOutTime < -1) {
             logger.error("'checkInTime' or 'checkOutTime' less than -1! (checkInTime:" + checkInTime + ", checkOutTime:" + checkOutTime + ")");
-            return apiResultMgr.make("00106", ApiResult.class); // 올바르지않은 값을 전달받았습니다.
+            return ApiResult.make(false, "00106"); // 올바르지않은 값을 전달받았습니다.
         }
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.checkResultCodeSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
 
-        Users ownUser = (Users) checkUserSvcResult.getResultData("selectedUser");
+        Users ownUser = (Users) checkUserSvcResult.getData("selectedUser");
         
         if (ownUser == null) {
             logger.error("'ownUser' is null!");
-            return apiResultMgr.make("00102", ApiResult.class); // 서버에서 값 획득에 실패했습니다.
+            return ApiResult.make(false, "00102"); // 서버에서 값 획득에 실패했습니다.
         }
 
         // JPA - Update (Select and Save)
         Commutes updatedCommutes = null;
 
         try {
-            Commutes originCommutes = (Commutes) selectCommutesById(userJwt, commutesId).getResultData("selectedCommutes");
+            Commutes originCommutes = (Commutes) selectCommutesById(userJwt, commutesId).getData("selectedCommutes");
 
             if (originCommutes == null) {
                 logger.error("'originCommutes' is null. FAIL to find origin data!");
@@ -359,37 +358,37 @@ public class CommutesService implements ICommutesService {
         }
         catch (Exception e) {
             logger.error("JPA Update Exception!", e);
-            return apiResultMgr.make("20103", ApiResult.class); // 출퇴근기록 DB변경중 오류가 발생했습니다.
+            return ApiResult.make(false, "20103"); // 출퇴근기록 DB변경중 오류가 발생했습니다.
         }
 
         logger.info("Update commutes SUCCESS! (ownUser:" + ownUser.getEmail() + ", commutesId:" + commutesId + ")");
-        return apiResultMgr.make(MapUtil.toMap("updatedCommutes", updatedCommutes), ApiResult.class);
+        return ApiResult.make(true, MapUtil.toMap("updatedCommutes", updatedCommutes));
     }
 
     @Override @Transactional
     public ApiResult deleteCommutes(String userJwt, long commutesId) {
         if (userJwt == null) {
             logger.error("'userJwt' is null!");
-            return apiResultMgr.make("00202", ApiResult.class); // 회원토큰 값이 비었습니다.
+            return ApiResult.make(false, "00202"); // 회원토큰 값이 비었습니다.
         }
 
         if (commutesId < 0) {
             logger.error("'commutesId' less than zero! (commutesId:" + commutesId + ")");
-            return apiResultMgr.make("00106", ApiResult.class); // 올바르지않은 값을 전달받았습니다.
+            return ApiResult.make(false, "00106"); // 올바르지않은 값을 전달받았습니다.
         }
 
         ApiResult checkUserSvcResult = usersSvc.checkUserStatus(userJwt);
 
-        if (checkUserSvcResult.checkResultCodeSuccess() == false) {
+        if (checkUserSvcResult.getResult() == false) {
             logger.error("'checkUserSvcResult's response code is FAIL!");
             return checkUserSvcResult;
         }
 
-        Users ownUser = (Users) checkUserSvcResult.getResultData("selectedUser");
+        Users ownUser = (Users) checkUserSvcResult.getData("selectedUser");
         
         if (ownUser == null) {
             logger.error("'ownUser' is null!");
-            return apiResultMgr.make("00102", ApiResult.class); // 서버에서 값 획득에 실패했습니다.
+            return ApiResult.make(false, "00102"); // 서버에서 값 획득에 실패했습니다.
         }
 
         Integer deletedRows = null;
@@ -404,7 +403,7 @@ public class CommutesService implements ICommutesService {
         }
         catch (Exception e) {
             logger.error("JPA Delete Exception!", e);
-            return apiResultMgr.make("20104", ApiResult.class); // 출퇴근기록 DB삭제중 오류가 발생했습니다.
+            return ApiResult.make(false, "20104"); // 출퇴근기록 DB삭제중 오류가 발생했습니다.
         }
 
         if (deletedRows > 0) {
@@ -414,6 +413,6 @@ public class CommutesService implements ICommutesService {
             logger.info("Delete commutes SUCCESS! (ownUser:" + ownUser.getEmail() + ", commutesId:" + commutesId + ")");
         }
         
-        return apiResultMgr.make(ApiResult.class);
+        return ApiResult.make(true);
     }
 }

@@ -36,7 +36,7 @@ var GHASIX_API = {
             if (!!alwaysFunc) return alwaysFunc(data_jqXHR, textStatus, jqXHR_errorThrown);
         })
         .done(function(data, textStatus, jqXHR) {
-            if (!!doneFunc) return doneFunc(data.apiResult, textStatus, jqXHR);
+            if (!!doneFunc) return doneFunc(data, textStatus, jqXHR);
             return true;
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
@@ -44,18 +44,14 @@ var GHASIX_API = {
             return false;
         });
     },
-    // API ResultCode Check
+    // API result_code Check
     checkResultSuccess : function(apiResult) {
         if (!apiResult) {
             console.log("Parameter 'apiResult' error! (apiResult:" + apiResult + ")");
             return false;
         }
 
-        if (apiResult.resultCode != '00000') {
-            return false;
-        }
-
-        return true;
+        return apiResult.result;
     },
     // Get ResultData From API ResultData
     getResultData : function(apiResult, key) {
@@ -69,7 +65,7 @@ var GHASIX_API = {
             return null;
         }
 
-        var resultData = apiResult.resultDatas;
+        var resultData = apiResult.result_data;
 
         if (!resultData) {
             console.log("Parameter 'resultData' error! (resultData:" + resultData + ")");

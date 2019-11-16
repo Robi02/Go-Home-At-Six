@@ -36,7 +36,7 @@ function searchSuccess(apiResult) {
 		commutes_list_ary = GHASIX_API.getResultData(apiResult, 'selectedCommutesList');
 	}
 	else {
-		alert(JSON.stringify(apiResult.resultMsg));
+		alert(JSON.stringify(apiResult.result_msg));
 	}
 
 	updateList();
@@ -99,7 +99,7 @@ function listButtonTag(idx, checkInTime, checkOutTime) {
 	var workingTimeMs = checkOutTime - checkInTime;
 	var workingTimeHours = parseInt(workingTimeMs / 3600000);
 	var workingTimeMins = parseInt(workingTimeMs / 60000 % 60);
-	var workingTimeStr = (workingTimeHours + (workingTimeMins / 60.0)).toFixed(1) + 'h';
+	var workingTimeStr = (workingTimeHours + 'h ' + workingTimeMins + 'm');
 	var badgeLevel = null;
 	var badgeStr = null;
 
@@ -109,32 +109,30 @@ function listButtonTag(idx, checkInTime, checkOutTime) {
 		badgeStr = '일중';		
 	}
 	else {
-		// 8시간 15분 이내 (칼퇴)
+		// 8시간 15분 이내
 		if (workingTimeMs <= 3600000 * 8 + 60000 * 15) {
 			badgeLevel = 'primary';
-			badgeStr = '칼퇴';
 		}
-		// 8시간 30분 이내 (양호)
+		// 8시간 30분 이내
 		else if (workingTimeMs <= 3600000 * 8 + 60000 * 30) {
 			badgeLevel = 'info';
-			badgeStr = '양호';
 		}
-		// 9시간 00분 이내 (주의)
+		// 9시간 00분 이내
 		else if (workingTimeMs <= 3600000 * 9) {
 			badgeLevel = 'warning';
-			badgeStr = '주의';
 		}
-		// 10시간 이상 (심각)
+		// 10시간 이상
 		else {
 			badgeLevel = 'danger';
-			badgeStr = '심각';
 		}
+
+		badgeStr = workingTimeStr;
 	}
 
 	return ('<button type="button" onclick="listButtonClick(' + idx + ')" data-toggle="modal" data-target="#exampleModalCenter"\
 	class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" \
 	id="btn_commutes_' + idx + '">\
-	<span><b>' + checkInDateStr + '</b> <small>(' + checkInTimeStr + '~' + (!checkOutTimeStr ? '' : checkOutTimeStr + ' / ' + workingTimeStr) + ')</small></span>\
+	<span><b>' + checkInDateStr + '</b> <small>(' + checkInTimeStr + '~' + (!checkOutTimeStr ? '' : checkOutTimeStr) + ')</small></span>\
 	<span class="badge badge-' + badgeLevel + ' badge-pill">' + badgeStr + '</span></button>');
 }
 
@@ -215,7 +213,7 @@ function modifyCommutesButtonClick() {
 
 function modifySuccess(apiResult) {
 	if (!GHASIX_API.checkResultSuccess(apiResult)) {
-		alert(apiResult.resultMsg);
+		alert(apiResult.result_msg);
 		return;
 	}
 
@@ -251,7 +249,7 @@ function deleteCommutesButtonClick() {
 
 function deleteSuccess(apiResult) {
 	if (!GHASIX_API.checkResultSuccess(apiResult)) {
-		alert(apiResult.resultMsg);
+		alert(apiResult.result_msg);
 		return;
 	}
 
