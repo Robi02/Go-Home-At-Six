@@ -11,12 +11,12 @@ var mf_loginPageURL		 = null;
 $(document).ready(function() {
 	// Init Global
 	mf_userJwt           = $.cookie('userJwt');
-	mf_apiDomain         = 'http://localhost:50001';
+	mf_apiDomain         = 'http://localhost:40001';
 	mf_mainPageURL		 = mf_apiDomain + '/main';
 	mf_recordPageURL     = mf_apiDomain + '/record';
 	mf_listPageURL       = mf_apiDomain + '/list';
 	mf_statisticsPageURL = mf_apiDomain + '/statistics';
-	mf_loginPageURL		 = 'http://localhost:50000/main?audience=ghasix&afterIssueParam=' + mf_mainPageURL; // auth-servers
+	mf_loginPageURL		 = 'http://localhost:40000/main?audience=ghasix&afterIssueParam=' + mf_mainPageURL; // auth-servers
 
 	// Update userJwt
 	if (!mf_userJwt) { // fail to find userJwt from cookie

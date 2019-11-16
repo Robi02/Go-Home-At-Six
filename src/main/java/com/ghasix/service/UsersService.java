@@ -48,7 +48,7 @@ public class UsersService implements IUsersService {
             return ApiResult.make(false);
         }
 
-        String responseStr = RestHttpUtil.urlConnection("http://localhost:50000/users/api/jwt/validate",
+        String responseStr = RestHttpUtil.urlConnection("http://localhost:40000/users/api/jwt/validate",
                                                         RestHttpUtil.METHOD_POST,
                                                         MapUtil.toMap("Content-Type", "application/json;charset=utf-8"),
                                                         MapUtil.toMap("userJwt", userJwt, "audience", "ghasix"));
