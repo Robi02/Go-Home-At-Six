@@ -1,6 +1,8 @@
 // Global
+var mf_testMode          = true;
+var mf_ghasixDomain      = mf_testMode ? 'http://localhost:40001' : 'http://dev4robi.net:40001';
+var mf_authsDomain		 = mf_testMode ? 'http://localhost:40000' : 'http://dev4robi.net:40000';
 var mf_userJwt           = null;
-var mf_apiDomain         = null;
 var mf_mainPageURL		 = null;
 var mf_recordPageURL     = null;
 var mf_listPageURL       = null;
@@ -11,12 +13,11 @@ var mf_loginPageURL		 = null;
 $(document).ready(function() {
 	// Init Global
 	mf_userJwt           = $.cookie('userJwt');
-	mf_apiDomain         = 'http://localhost:40001';
-	mf_mainPageURL		 = mf_apiDomain + '/main';
-	mf_recordPageURL     = mf_apiDomain + '/record';
-	mf_listPageURL       = mf_apiDomain + '/list';
-	mf_statisticsPageURL = mf_apiDomain + '/statistics';
-	mf_loginPageURL		 = 'http://localhost:40000/main?audience=ghasix&afterIssueParam=' + mf_mainPageURL; // auth-servers
+	mf_mainPageURL		 = mf_ghasixDomain + '/main';
+	mf_recordPageURL     = mf_ghasixDomain + '/record';
+	mf_listPageURL       = mf_ghasixDomain + '/list';
+	mf_statisticsPageURL = mf_ghasixDomain + '/statistics';
+	mf_loginPageURL		 = mf_authsDomain  + '/main?audience=ghasix&afterIssueParam=' + mf_mainPageURL; // auth-servers
 
 	// Update userJwt
 	if (!mf_userJwt) { // fail to find userJwt from cookie
@@ -24,8 +25,8 @@ $(document).ready(function() {
 			// ...
 		}
 		else {
-			if (!!getUrlParameter('keepLoggedIn')) { // 15day
-				$.cookie('userJwt', mf_userJwt, { expires: 15 });
+			if (!!getUrlParameter('keepLoggedIn')) {
+				$.cookie('userJwt', mf_userJwt, { expires: 15 }); // 15days
 			}
 			else {
 				$.cookie('userJwt', mf_userJwt, { expires: 1 }); // 1day

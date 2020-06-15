@@ -49,8 +49,8 @@ function ajaxFail() {
 
 // Init input
 function initInput() {
-	var fromDate = new Date(new Date().getTime() - (3600000 * 24 * 7));
 	var toDate = new Date();
+	var fromDate = new Date(toDate.getTime() - (3600000 * 24 * 14));
 	
 	$('#input_from_year').val(fromDate.format('yyyy'));
 	$('#input_from_month').val(fromDate.format('MM'));
@@ -109,19 +109,19 @@ function listButtonTag(idx, checkInTime, checkOutTime) {
 		badgeStr = '일중';		
 	}
 	else {
-		// 8시간 15분 이내
-		if (workingTimeMs <= 3600000 * 8 + 60000 * 15) {
+		// 9시간 15분 이내
+		if (workingTimeMs <= 3600000 * 9 + 60000 * 15) {
 			badgeLevel = 'primary';
 		}
-		// 8시간 30분 이내
-		else if (workingTimeMs <= 3600000 * 8 + 60000 * 30) {
+		// 9시간 45분 이내
+		else if (workingTimeMs <= 3600000 * 9 + 60000 * 45) {
 			badgeLevel = 'info';
 		}
-		// 9시간 00분 이내
-		else if (workingTimeMs <= 3600000 * 9) {
+		// 10시간 15분 이내
+		else if (workingTimeMs <= 3600000 * 10 + 60000 * 15) {
 			badgeLevel = 'warning';
 		}
-		// 10시간 이상
+		// 10시간 15분 초과 (overtime: 1h15m)
 		else {
 			badgeLevel = 'danger';
 		}
